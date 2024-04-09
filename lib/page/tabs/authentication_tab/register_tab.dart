@@ -15,7 +15,6 @@ class RegisterTab extends StatefulWidget {
 class _RegisterTabState extends State<RegisterTab> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController email = TextEditingController();
-  final TextEditingController userName = TextEditingController();
   final TextEditingController password = TextEditingController();
   final TextEditingController repassword = TextEditingController();
   final TextEditingController firstName = TextEditingController();
@@ -25,10 +24,10 @@ class _RegisterTabState extends State<RegisterTab> {
   void signUpUser() {
     if (password.text == repassword.text) {
       if (_formKey.currentState!.validate()) {
+        print('vao day r');
         authSignUp.signUpUser(
           context: context,
-          email: email.text,
-          userName: userName.text.trim(),
+          email: email.text.trim(),
           firstName: firstName.text,
           lastName: lastName.text,
           password: password.text.trim(),
@@ -75,12 +74,6 @@ class _RegisterTabState extends State<RegisterTab> {
                     TextFieldWidget(
                         controller: lastName,
                         labelText: 'Họ',
-                        icon: const Icon(Icons.person),
-                        keyboardType: null),
-                    const SizedBox(height: 10),
-                    TextFieldWidget(
-                        controller: userName,
-                        labelText: 'Tên đăng nhập',
                         icon: const Icon(Icons.person),
                         keyboardType: null),
                     const SizedBox(height: 10),

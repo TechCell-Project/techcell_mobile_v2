@@ -34,7 +34,17 @@ class AuthModel {
       accessToken: map['accessToken'],
       accessTokenExpires: map['accessTokenExpires'],
       refreshToken: map['refreshToken'],
-      user: map['user'] ?? {},
+      user: map['user'] != null
+          ? User.fromMap(map['user'])
+          : User(
+              email: '',
+              emailVerified: true,
+              provider: '',
+              socialId: '',
+              firstName: '',
+              lastName: '',
+              role: '',
+              avatar: Avatar(publicId: '', url: '')),
       address: map["address"] != null
           ? List<Address>.from(
               (map["address"] as List?)
@@ -87,14 +97,16 @@ class User {
 
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
-      email: map['email'],
-      emailVerified: map['emailVerified'],
-      provider: map['provider'],
-      socialId: map['socialId'],
-      firstName: map['firstName'],
-      lastName: map['lastName'],
-      role: map['role'],
-      avatar: map['avatar'],
+      email: map['email'] ?? '',
+      emailVerified: map['emailVerified'] ?? '',
+      provider: map['provider'] ?? '',
+      socialId: map['socialId'] ?? '',
+      firstName: map['firstName'] ?? '',
+      lastName: map['lastName'] ?? '',
+      role: map['role'] ?? '',
+      avatar: map['avatar'] != null
+          ? Avatar.fromMap(map['avatar'])
+          : Avatar(publicId: '', url: ''),
     );
   }
   String toJson() => json.encode(toMap());
@@ -110,6 +122,16 @@ class Avatar {
     required this.publicId,
     required this.url,
   });
+  Map<String, dynamic> toMap() {
+    return {
+      'publicId': publicId,
+      'url': url,
+    };
+  }
+
+  factory Avatar.fromMap(Map<String, dynamic> map) {
+    return Avatar(publicId: map['publicId'], url: map['url']);
+  }
 }
 
 class Block {

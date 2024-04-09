@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'package:single_project/util/constants.dart';
 
 void showSnackBarError(BuildContext context, String text) {
@@ -58,7 +57,7 @@ void showSnackBarSuccess(BuildContext context, String text) {
 }
 
 void httpSuccessHandle({
-  required http.Response response,
+  required Response response,
   required BuildContext context,
   required VoidCallback onSuccess,
 }) {
@@ -94,16 +93,9 @@ void httpSuccessHandle({
         'Tài khoản của bạn chưa được xác thực',
       );
       break;
-
-    case 429:
-      showSnackBarError(
-        context,
-        jsonDecode(response.body)['error'],
-      );
-      break;
     case 502:
       showSnackBarError(context, 'loi o day');
     default:
-      showSnackBarError(context, response.body);
+      showSnackBarError(context, response.data.toString());
   }
 }
