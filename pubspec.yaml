@@ -36,10 +36,11 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
   shared_preferences: ^2.2.2
-  http: ^1.2.1
   google_nav_bar: ^5.0.6
   provider: ^6.1.2
-  
+  dio: ^5.4.2+1
+  dart_sdk:
+    git: https://github.com/TechCell-Project/dart-sdk.git
 
 dev_dependencies:
   flutter_test:

@@ -19,7 +19,7 @@ class UserProvider extends ChangeNotifier {
     block: Block(false, []),
   );
   AuthModel get user => _user;
-  setUser(dynamic user) {
+  void setUser(dynamic user) {
     _user = AuthModel.fromJson(user);
     notifyListeners();
   }
