@@ -68,6 +68,9 @@ void httpSuccessHandle({
     case 201:
       onSuccess();
       break;
+    case 204:
+      onSuccess();
+      break;
     case 400:
       showSnackBarError(
         context,

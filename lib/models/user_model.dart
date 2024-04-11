@@ -98,7 +98,7 @@ class User {
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
       email: map['email'] ?? '',
-      emailVerified: map['emailVerified'] ?? '',
+      emailVerified: map['emailVerified'] ?? true,
       provider: map['provider'] ?? '',
       socialId: map['socialId'] ?? '',
       firstName: map['firstName'] ?? '',

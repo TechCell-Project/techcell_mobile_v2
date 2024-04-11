@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:single_project/models/user_model.dart';
 
 class UserProvider extends ChangeNotifier {
@@ -19,8 +20,17 @@ class UserProvider extends ChangeNotifier {
     block: Block(false, []),
   );
   AuthModel get user => _user;
-  void setUser(dynamic user) {
-    _user = AuthModel.fromJson(user);
+  void setUser(AuthModel user) {
+    _user = user;
     notifyListeners();
+  }
+
+  static Future<AuthModel?> getUserFromStorage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userJson = prefs.getString('user');
+    if (userJson != null) {
+      return AuthModel.fromJson(userJson);
+    }
+    return null;
   }
 }

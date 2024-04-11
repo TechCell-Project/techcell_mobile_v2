@@ -4,7 +4,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:single_project/page/screens/main_screen.dart';
 import 'package:single_project/util/constants.dart';
+import 'package:single_project/util/snackbar.dart';
 
 class RegisterApi {
   Dio dio = Dio();
@@ -32,10 +34,18 @@ class RegisterApi {
           options: Options(
             headers: authServiceHeaders(),
           ));
-
-      print(res.data);
+      httpSuccessHandle(
+        response: res,
+        context: context,
+        onSuccess: () async {
+          showSnackBarSuccess(context, 'Đăng ký thành công');
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const MainScreen()),
+              (route) => false);
+        },
+      );
     } catch (e) {
-      print(e.toString());
+      showSnackBarError(context, 'Đăng ký thất bại');
     }
   }
 }

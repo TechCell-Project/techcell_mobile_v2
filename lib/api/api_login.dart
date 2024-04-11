@@ -6,16 +6,21 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:single_project/Providers/user_provider.dart';
+import 'package:single_project/models/user_model.dart';
 import 'package:single_project/page/screens/main_screen.dart';
 import 'package:single_project/util/constants.dart';
+import 'package:single_project/util/interceptor.dart';
 import 'package:single_project/util/snackbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiLogin {
   Dio dio = Dio();
-  Map<String, String> authServiceHeaders() {
+
+  final InterceptorClass interceptorClass = InterceptorClass();
+
+  Map<String, String> headersHaveAccessToken(String token) {
     return {
-      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
     };
   }
 
@@ -29,9 +34,6 @@ class ApiLogin {
       Response res = await dio.post(
         '$uriAuth/email/login',
         data: jsonEncode({'email': email, 'password': password}),
-        options: Options(
-          headers: authServiceHeaders(),
-        ),
       );
       httpSuccessHandle(
         response: res,
@@ -39,15 +41,14 @@ class ApiLogin {
         onSuccess: () async {
           final prefs = await SharedPreferences.getInstance();
           prefs.setString('user', jsonEncode(res.data));
-
-          userProvider.setUser(jsonEncode(res.data));
+          userProvider.setUser(AuthModel.fromJson(jsonEncode(res.data)));
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (context) => const MainScreen()),
               (route) => false);
         },
       );
     } catch (e) {
-      showSnackBarError(context, e.toString());
+      showSnackBarError(context, 'Đăng nhập thất bại');
     }
   }
 
@@ -57,12 +58,30 @@ class ApiLogin {
     return userJson != null;
   }
 
-  Future logout(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-    Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => const MainScreen()),
-        (route) => false);
+  Future logout(BuildContext context, {required String token}) async {
+    try {
+      Dio dioWithInterceptor = interceptorClass.getDioWithInterceptor();
+      print(token);
+      Response res = await dioWithInterceptor.post(
+        '$uriAuth/logout',
+        options: Options(
+          headers: headersHaveAccessToken(token),
+        ),
+      );
+      httpSuccessHandle(
+        response: res,
+        context: context,
+        onSuccess: () async {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.clear();
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const MainScreen()),
+              (route) => false);
+        },
+      );
+    } catch (e) {
+      print('loi dang xuat');
+    }
   }
 }

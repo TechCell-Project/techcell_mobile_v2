@@ -24,7 +24,6 @@ class _RegisterTabState extends State<RegisterTab> {
   void signUpUser() {
     if (password.text == repassword.text) {
       if (_formKey.currentState!.validate()) {
-        print('vao day r');
         authSignUp.signUpUser(
           context: context,
           email: email.text.trim(),
