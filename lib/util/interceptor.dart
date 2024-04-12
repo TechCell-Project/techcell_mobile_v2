@@ -40,10 +40,10 @@ class InterceptorClass {
           }
           // Kiểm tra xem user có đăng nhập hay chưa. Nếu chưa thì call handler.next(options)
           // để trả data về tiếp client
-          print(expiredTime);
 
           if (expiredTime == 0) {
             try {
+              print('vao trong cho nay');
               final response = await dio.post(
                 '$uriAuth/refresh',
                 data: {"refreshToken": refreshToken1},

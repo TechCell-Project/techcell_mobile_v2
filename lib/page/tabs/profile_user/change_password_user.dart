@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:single_project/api/api_profile_user.dart';
 import 'package:single_project/util/constants.dart';
 import 'package:single_project/widgets/button/button_send_requrest.dart';
 import 'package:single_project/widgets/text_fields/text_field_password.dart';
@@ -49,7 +50,16 @@ class _ChangePasswordTabState extends State<ChangePasswordTab> {
                 obscureText: true,
               ),
               const SizedBox(height: 30),
-              ButtonSendrequest(text: 'Đổi Mật khẩu', submit: () {})
+              ButtonSendrequest(
+                  text: 'Đổi Mật khẩu',
+                  submit: () {
+                    ApiUser().changePasswordUser(
+                      context,
+                      oldPassword.text,
+                      newPassword.text,
+                      reNewPassword.text,
+                    );
+                  })
             ],
           ),
         ));
