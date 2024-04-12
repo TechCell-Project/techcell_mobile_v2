@@ -25,7 +25,7 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  static Future<AuthModel?> getUserFromStorage() async {
+  Future<AuthModel?> getUserFromStorage() async {
     final prefs = await SharedPreferences.getInstance();
     final userJson = prefs.getString('user');
     if (userJson != null) {

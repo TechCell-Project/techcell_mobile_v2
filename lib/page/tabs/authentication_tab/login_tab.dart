@@ -128,7 +128,9 @@ class _LoginTapState extends State<LoginTap> {
                     ),
                     const SizedBox(height: 10),
                     ButtonLogin(
-                      loginWith: () {},
+                      loginWith: () {
+                        ApiLogin().loginFaceBook();
+                      },
                       image: 'assets/icons/facebook.png',
                       text: 'Đăng nhập bằng facebook',
                     ),

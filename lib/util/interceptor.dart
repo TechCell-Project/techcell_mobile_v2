@@ -40,35 +40,7 @@ class InterceptorClass {
           }
           // Kiểm tra xem user có đăng nhập hay chưa. Nếu chưa thì call handler.next(options)
           // để trả data về tiếp client
-          if (expiredTime == 0) {
-            if (!isRefreshing) {
-              isRefreshing = true;
-              try {
-                final response = await dio.post(
-                  '$uriAuth/refresh',
-                  data: {"refreshToken": refreshToken1},
-                );
-                if (response.statusCode == 200) {
-                  if (response.data != false) {
-                    options.headers['Authorization'] =
-                        "Bearer ${response.data["accessToken"]}";
-                    final expiredTime = DateTime.now().add(Duration(
-                        seconds: response.data["accessTokenExpires"] - 240));
-                    await prefs.setString(
-                        "accessToken", response.data["accessToken"]);
-                    await prefs.setString(
-                        "accessTokenExpires", expiredTime.toString());
-                  }
-                }
-              } catch (error) {
-                print(
-                    'Lỗi khi gửi yêu cầu refresh token cua thang null: $error');
-              } finally {
-                isRefreshing = false;
-              }
-            }
-            return handler.next(options);
-          }
+          print(expiredTime);
 
           if (expiredTime == 0) {
             try {
@@ -80,8 +52,8 @@ class InterceptorClass {
                 if (response.data != false) {
                   options.headers['Authorization'] =
                       "Bearer ${response.data["accessToken"]}";
-                  final expiredTime = DateTime.now().add(Duration(
-                      seconds: response.data["accessTokenExpires"] - 240));
+                  final expiredTime = Duration(
+                      seconds: response.data["accessTokenExpires"] - 240);
                   await prefs.setString(
                       "accessToken", response.data["accessToken"]);
                   await prefs.setString("expiredTime", expiredTime.toString());

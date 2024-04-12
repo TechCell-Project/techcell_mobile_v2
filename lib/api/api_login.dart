@@ -12,6 +12,7 @@ import 'package:single_project/util/constants.dart';
 import 'package:single_project/util/interceptor.dart';
 import 'package:single_project/util/snackbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
 class ApiLogin {
   Dio dio = Dio();
@@ -22,6 +23,19 @@ class ApiLogin {
     return {
       'Authorization': 'Bearer $token',
     };
+  }
+
+  Future<void> loginFaceBook() async {
+    final LoginResult result = await FacebookAuth.instance.login();
+    if (result.status == LoginStatus.success) {
+      print(result.accessToken);
+
+      final userData = await FacebookAuth.instance.getUserData();
+      print(userData);
+    } else {
+      print(result.status);
+      print(result.message);
+    }
   }
 
   Future<void> userLogin({
@@ -42,6 +56,8 @@ class ApiLogin {
           final prefs = await SharedPreferences.getInstance();
           prefs.setString('user', jsonEncode(res.data));
           userProvider.setUser(AuthModel.fromJson(jsonEncode(res.data)));
+          print(res.data['accessToken']);
+          print(res.data['accessTokenExpires']);
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (context) => const MainScreen()),
               (route) => false);
@@ -58,15 +74,11 @@ class ApiLogin {
     return userJson != null;
   }
 
-  Future logout(BuildContext context, {required String token}) async {
+  Future logout(BuildContext context) async {
     try {
       Dio dioWithInterceptor = interceptorClass.getDioWithInterceptor();
-      print(token);
       Response res = await dioWithInterceptor.post(
         '$uriAuth/logout',
-        options: Options(
-          headers: headersHaveAccessToken(token),
-        ),
       );
       httpSuccessHandle(
         response: res,

@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-class Address {
+class AddressModel {
   ProvinceLevel provinceLevel;
   DistrictLevel districtLevel;
   WardLevel wardLevel;
@@ -9,7 +9,7 @@ class Address {
   String customerName;
   String type;
 
-  Address({
+  AddressModel({
     required this.provinceLevel,
     required this.districtLevel,
     required this.wardLevel,
@@ -18,9 +18,10 @@ class Address {
     required this.customerName,
     required this.type,
   });
-  factory Address.fromRawJson(String str) => Address.fromJson(json.decode(str));
+  factory AddressModel.fromRawJson(String str) =>
+      AddressModel.fromJson(json.decode(str));
   String toRawJson() => json.encode(toJson());
-  factory Address.fromJson(Map<String, dynamic> json) => Address(
+  factory AddressModel.fromJson(Map<String, dynamic> json) => AddressModel(
         provinceLevel: ProvinceLevel.fromJson(json["provinceLevel"]),
         districtLevel: DistrictLevel.fromJson(json["districtLevel"]),
         wardLevel: WardLevel.fromJson(json["wardLevel"]),
@@ -50,7 +51,7 @@ class ProvinceLevel {
   String toRawJson() => json.encode(toJson());
 
   factory ProvinceLevel.fromJson(Map<String, dynamic> json) => ProvinceLevel(
-        provinceId: json["provinceId"] as int,
+        provinceId: json["provinceId"] ?? 0,
       );
 
   Map<String, dynamic> toJson() => {
@@ -67,7 +68,7 @@ class DistrictLevel {
   String toRawJson() => json.encode(toJson());
 
   factory DistrictLevel.fromJson(Map<String, dynamic> json) => DistrictLevel(
-        districtId: json["districtId"] as int,
+        districtId: json["districtId"] ?? 0,
       );
 
   Map<String, dynamic> toJson() => {
@@ -84,7 +85,7 @@ class WardLevel {
   String toRawJson() => json.encode(toJson());
 
   factory WardLevel.fromJson(Map<String, dynamic> json) => WardLevel(
-        wardId: json["wardId"],
+        wardId: json["wardId"] ?? '',
       );
 
   Map<String, dynamic> toJson() => {

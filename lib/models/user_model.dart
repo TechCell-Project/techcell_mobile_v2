@@ -7,7 +7,7 @@ class AuthModel {
   int accessTokenExpires;
   String refreshToken;
   User user;
-  List<Address> address;
+  List<AddressModel> address;
   Block? block;
 
   AuthModel({
@@ -46,10 +46,11 @@ class AuthModel {
               role: '',
               avatar: Avatar(publicId: '', url: '')),
       address: map["address"] != null
-          ? List<Address>.from(
+          ? List<AddressModel>.from(
               (map["address"] as List?)
                       ?.where((x) => x != null)
-                      .map((x) => Address.fromJson(x as Map<String, dynamic>))
+                      .map((x) =>
+                          AddressModel.fromJson(x as Map<String, dynamic>))
                       .toList() ??
                   [],
             )
