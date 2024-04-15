@@ -7,16 +7,12 @@ class AuthModel {
   int accessTokenExpires;
   String refreshToken;
   User user;
-  List<AddressModel> address;
-  Block? block;
 
   AuthModel({
     required this.accessToken,
     required this.accessTokenExpires,
     required this.refreshToken,
     required this.user,
-    required this.address,
-    this.block,
   });
   Map<String, dynamic> toMap() {
     return {
@@ -24,16 +20,14 @@ class AuthModel {
       'accessTokenExpires': accessTokenExpires,
       'refreshToken': refreshToken,
       'user': user,
-      'address': address,
-      'block': block,
     };
   }
 
   factory AuthModel.fromMap(Map<String, dynamic> map) {
     return AuthModel(
-      accessToken: map['accessToken'],
-      accessTokenExpires: map['accessTokenExpires'],
-      refreshToken: map['refreshToken'],
+      accessToken: map['accessToken'] ?? '',
+      accessTokenExpires: map['accessTokenExpires'] ?? 0,
+      refreshToken: map['refreshToken'] ?? '',
       user: map['user'] != null
           ? User.fromMap(map['user'])
           : User(
@@ -44,17 +38,20 @@ class AuthModel {
               firstName: '',
               lastName: '',
               role: '',
-              avatar: Avatar(publicId: '', url: '')),
-      address: map["address"] != null
-          ? List<AddressModel>.from(
-              (map["address"] as List?)
-                      ?.where((x) => x != null)
-                      .map((x) =>
-                          AddressModel.fromJson(x as Map<String, dynamic>))
-                      .toList() ??
-                  [],
-            )
-          : [],
+              avatar: Avatar(publicId: '', url: ''),
+              address: map["address"] != null
+                  ? List<AddressModel>.from(
+                      (map["address"] as List?)
+                              ?.where((x) => x != null)
+                              .map((x) => AddressModel.fromJson(
+                                  x as Map<String, dynamic>))
+                              .toList() ??
+                          [],
+                    )
+                  : [],
+              createdAt: map['createdAt'] ?? '',
+              updatedAt: map['updatedAt'] ?? '',
+            ),
     );
   }
   String toJson() => json.encode(toMap());
@@ -70,8 +67,11 @@ class User {
   String socialId;
   String firstName;
   String lastName;
+  List<AddressModel> address;
   String role;
   Avatar avatar;
+  String createdAt;
+  String updatedAt;
 
   User({
     required this.email,
@@ -81,7 +81,10 @@ class User {
     required this.firstName,
     required this.lastName,
     required this.role,
+    required this.address,
     required this.avatar,
+    required this.createdAt,
+    required this.updatedAt,
   });
   Map<String, dynamic> toMap() {
     return {
@@ -93,6 +96,9 @@ class User {
       'lastName': lastName,
       'role': role,
       'avatar': avatar,
+      'address': address,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
     };
   }
 
@@ -108,6 +114,18 @@ class User {
       avatar: map['avatar'] != null
           ? Avatar.fromMap(map['avatar'])
           : Avatar(publicId: '', url: ''),
+      address: map["address"] != null
+          ? List<AddressModel>.from(
+              (map["address"] as List?)
+                      ?.where((x) => x != null)
+                      .map((x) =>
+                          AddressModel.fromJson(x as Map<String, dynamic>))
+                      .toList() ??
+                  [],
+            )
+          : [],
+      createdAt: map['createdAt'] ?? '',
+      updatedAt: map['updatedAt'] ?? '',
     );
   }
   String toJson() => json.encode(toMap());

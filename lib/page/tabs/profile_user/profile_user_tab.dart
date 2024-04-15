@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:single_project/Providers/user_provider.dart';
 import 'package:single_project/api/api_login.dart';
+import 'package:single_project/models/user_model.dart';
 import 'package:single_project/page/tabs/profile_user/address_user/address_user.dart';
 import 'package:single_project/page/tabs/profile_user/change_password_user.dart';
 import 'package:single_project/page/tabs/profile_user/information_user.dart';
 import 'package:single_project/page/tabs/profile_user/order_user.dart';
 import 'package:single_project/widgets/button/button_send_requrest.dart';
+import 'package:single_project/widgets/user_widgets/text_in_avatar.dart';
 
 class ProfileUser extends StatefulWidget {
   const ProfileUser({super.key});
@@ -55,20 +57,12 @@ class _ProfileUserState extends State<ProfileUser> {
                           child: Row(
                             children: [
                               if (user.avatar.url.isEmpty)
-                                Container(
-                                  width: 50,
-                                  height: 50,
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Color.fromARGB(255, 198, 198, 198),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      avatarLetterLasName + avatarLetter,
-                                      style: const TextStyle(
-                                          color: Colors.white, fontSize: 24),
-                                    ),
-                                  ),
+                                TextInAvatar(
+                                  textAvatar:
+                                      avatarLetter + avatarLetterLasName,
+                                  width: 70,
+                                  height: 70,
+                                  fontSized: 24,
                                 )
                               else
                                 Container(
@@ -110,9 +104,11 @@ class _ProfileUserState extends State<ProfileUser> {
                           ),
                         ),
                         divider(),
-                        colorTitles(),
+                        colorTitles(user),
+                        const SizedBox(height: 4),
                         divider(),
-                        const SizedBox(height: 40),
+                        bwTitles(),
+                        const SizedBox(height: 20),
                         Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: ButtonSendrequest(
@@ -143,32 +139,49 @@ class _ProfileUserState extends State<ProfileUser> {
     );
   }
 
-  Widget colorTitles() {
+  Widget colorTitles(User user) {
     return Column(
       children: [
-        colorTitle(Icons.person_outline, Colors.deepPurple, 'Hồ sơ ',
-            () => const InformationUserTab()),
+        colorTitle(
+          Icons.person_outline,
+          Colors.deepPurple,
+          'Hồ sơ ',
+          () => InformationUserTab(
+            user: user,
+          ),
+        ),
+        const SizedBox(height: 8),
         colorTitle(Icons.location_on, Colors.blue, 'Địa chỉ',
             () => const AddreesUserTab()),
-        colorTitle(Icons.shopping_cart_checkout_outlined, Colors.pink,
-            'Đơn hàng', () => const OrderUserTab()),
+        const SizedBox(height: 8),
+        colorTitle(Icons.shopping_bag, Colors.pink, 'Đơn hàng',
+            () => const OrderUserTab()),
+        const SizedBox(height: 8),
         colorTitle(Icons.settings, Colors.orange, 'Đổi Mật khẩu',
             () => const ChangePasswordTab()),
+        const SizedBox(height: 8),
       ],
     );
   }
 
-  Widget colorTitle(IconData icon, Color color, String text, Function() fun) {
+  Widget colorTitle(IconData icon, Color color, String text, Function()? fun,
+      {bool blackAndWhite = false}) {
+    Color pickdColor = const Color(0xfff3f4fe);
     return InkWell(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => fun()));
+        if (fun == null) {
+          return;
+        } else {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => fun()));
+        }
       },
       child: ListTile(
         leading: Container(
           height: 50,
           width: 50,
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: blackAndWhite ? pickdColor : color.withOpacity(0.1),
             borderRadius: BorderRadius.circular(18),
           ),
           child: Icon(
@@ -184,5 +197,22 @@ class _ProfileUserState extends State<ProfileUser> {
         ),
       ),
     );
+  }
+
+  Widget bwTitles() {
+    return Column(
+      children: [
+        bwTitle(Icons.info_outline, 'Hỏi đáp'),
+        const SizedBox(height: 8),
+        bwTitle(Icons.border_color_outlined, 'Chính sách'),
+        const SizedBox(height: 8),
+        bwTitle(Icons.textsms_outlined, 'Về chúng tôi'),
+        const SizedBox(height: 8),
+      ],
+    );
+  }
+
+  Widget bwTitle(IconData icon, String text) {
+    return colorTitle(icon, Colors.black, text, null, blackAndWhite: true);
   }
 }

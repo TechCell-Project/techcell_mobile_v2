@@ -1,17 +1,44 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:single_project/models/address_model.dart';
 import 'package:single_project/util/constants.dart';
+import 'package:single_project/util/interceptor.dart';
+import 'package:single_project/util/snackbar.dart';
 
 class ApiAddress {
   Dio dio = Dio();
+  final InterceptorClass interceptorClass = InterceptorClass();
+  Map<String, String> header() {
+    return {
+      'Content-Type': 'application/json',
+    };
+  }
+
   Future<void> addAdressUser(
     BuildContext context,
     AddressModel address,
   ) async {
-    try {} catch (e) {}
+    try {
+      Dio dioWithInterceptor = interceptorClass.getDioWithInterceptor();
+      Response res = await dioWithInterceptor.patch(
+        '$uriAuth/me',
+        data: jsonEncode(address.toJson()),
+        options: Options(headers: header()),
+      );
+      httpSuccessHandle(
+        response: res,
+        context: context,
+        onSuccess: () {
+          showSnackBarSuccess(context, 'Thay đổi thành công');
+        },
+      );
+    } catch (e) {
+      showSnackBarError(context, 'Thay đổi thất bại');
+    }
   }
 
   Future<List<ProvinceLevel>> getProvince() async {

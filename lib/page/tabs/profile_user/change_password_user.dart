@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:single_project/api/api_profile_user.dart';
 import 'package:single_project/util/constants.dart';
+import 'package:single_project/util/snackbar.dart';
 import 'package:single_project/widgets/button/button_send_requrest.dart';
 import 'package:single_project/widgets/text_fields/text_field_password.dart';
 
@@ -53,12 +54,16 @@ class _ChangePasswordTabState extends State<ChangePasswordTab> {
               ButtonSendrequest(
                   text: 'Đổi Mật khẩu',
                   submit: () {
-                    ApiUser().changePasswordUser(
-                      context,
-                      oldPassword.text,
-                      newPassword.text,
-                      reNewPassword.text,
-                    );
+                    if (newPassword.text == reNewPassword.text) {
+                      ApiUser().changePasswordUser(
+                        context,
+                        oldPassword.text,
+                        newPassword.text,
+                        reNewPassword.text,
+                      );
+                    } else {
+                      showSnackBarError(context, 'Mật khẩu không khớp');
+                    }
                   })
             ],
           ),

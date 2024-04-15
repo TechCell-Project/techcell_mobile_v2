@@ -12,6 +12,12 @@ class InterceptorClass {
   InterceptorClass() {
     dioWithInterceptor = getDioWithInterceptor();
   }
+  bool isAccessTokenValid(int accessTokenExpires) {
+    final currentTimeInMilliseconds = DateTime.now().millisecondsSinceEpoch;
+    final expirationTimeInMilliseconds = accessTokenExpires * 1000;
+    return currentTimeInMilliseconds < expirationTimeInMilliseconds;
+  }
+
   Dio getDioWithInterceptor() {
     Dio dio = Dio();
     dio.interceptors.add(
@@ -27,6 +33,7 @@ class InterceptorClass {
           int? expiredTime = 0;
           String? refreshToken1 = '';
           final userJson = prefs.getString('user');
+
           if (userJson != null) {
             final user = AuthModel.fromJson(userJson);
             final refreshToken = user.refreshToken;
@@ -34,14 +41,19 @@ class InterceptorClass {
             final accessToken1 = user.accessToken;
             refreshToken1 = refreshToken;
             accessToken = accessToken1;
-            expiredTime = expiredTime1;
+            expiredTime = expiredTime1 * 1000;
           } else {
             print('không tìm thấy refreshToken');
           }
-          // Kiểm tra xem user có đăng nhập hay chưa. Nếu chưa thì call handler.next(options)
-          // để trả data về tiếp client
-
+          if (expiredTime != 0) {
+            final expiredTimeMilliseconds = int.parse(expiredTime.toString());
+            final expiredTimeInSeconds = expiredTimeMilliseconds ~/ 1000;
+            expiredTime = expiredTimeInSeconds;
+          }
+          // final expiredTimeConvert = DateTime.parse(expiredTime.toString());
+          // final isExpired = DateTime.now().isAfter(expiredTimeConvert);
           if (expiredTime == 0) {
+            print('vao check');
             try {
               print('vao trong cho nay');
               final response = await dio.post(
@@ -56,12 +68,13 @@ class InterceptorClass {
                       seconds: response.data["accessTokenExpires"] - 240);
                   await prefs.setString(
                       "accessToken", response.data["accessToken"]);
-                  await prefs.setString("expiredTime", expiredTime.toString());
+                  await prefs.setString(
+                      "accessTokenExpires", expiredTime.toString());
                 } else {
-                  print('refresh token expired');
+                  print('access token expired');
                 }
               } else {
-                print('refresh token expired 1');
+                print('access token expired 1');
               }
               return handler.next(options);
             } on DioError catch (error) {
@@ -69,6 +82,7 @@ class InterceptorClass {
               return handler.reject(error, true);
             }
           } else {
+            print('access token valid');
             options.headers['Authorization'] = "Bearer $accessToken";
             return handler.next(options);
           }
@@ -78,7 +92,7 @@ class InterceptorClass {
         },
         onError: (error, handler) async {
           if (error.response?.statusCode == 401) {
-            print('refresh token expired 3');
+            print(error);
           }
           return handler.next(error);
         },

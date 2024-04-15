@@ -103,50 +103,6 @@ class _AddAdressUserState extends State<AddAdressUser> {
                   ),
                 ),
               ),
-              Container(
-                decoration: const BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(color: Colors.grey, width: 0.4),
-                  ),
-                  color: Colors.white,
-                ),
-                child: InkWell(
-                  onTap: () {
-                    ApiAddress().getDistrict(268);
-                  },
-                  child: const Padding(
-                    padding:
-                        EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 5),
-                    child: Row(
-                      children: [
-                        Text('Chọn thành phố: '),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Container(
-                decoration: const BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(color: Colors.grey, width: 0.4),
-                  ),
-                  color: Colors.white,
-                ),
-                child: InkWell(
-                  onTap: () {
-                    ApiAddress().getWards(2046);
-                  },
-                  child: const Padding(
-                    padding:
-                        EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 5),
-                    child: Row(
-                      children: [
-                        Text('Chọn thành phố: '),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
               const SizedBox(height: 30),
               Padding(
                 padding: const EdgeInsets.all(10.0),

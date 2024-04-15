@@ -1,12 +1,9 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, avoid_print
 
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:single_project/Providers/user_provider.dart';
-import 'package:single_project/models/user_model.dart';
 import 'package:single_project/page/screens/main_screen.dart';
 import 'package:single_project/util/constants.dart';
 import 'package:single_project/util/interceptor.dart';
@@ -44,7 +41,6 @@ class ApiLogin {
     required String password,
   }) async {
     try {
-      var userProvider = Provider.of<UserProvider>(context, listen: false);
       Response res = await dio.post(
         '$uriAuth/email/login',
         data: jsonEncode({'email': email, 'password': password}),
@@ -55,9 +51,6 @@ class ApiLogin {
         onSuccess: () async {
           final prefs = await SharedPreferences.getInstance();
           prefs.setString('user', jsonEncode(res.data));
-          userProvider.setUser(AuthModel.fromJson(jsonEncode(res.data)));
-          print(res.data['accessToken']);
-          print(res.data['accessTokenExpires']);
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (context) => const MainScreen()),
               (route) => false);
