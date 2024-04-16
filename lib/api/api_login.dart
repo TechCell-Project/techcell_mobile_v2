@@ -69,22 +69,28 @@ class ApiLogin {
 
   Future logout(BuildContext context) async {
     try {
-      Dio dioWithInterceptor = interceptorClass.getDioWithInterceptor();
-      Response res = await dioWithInterceptor.post(
-        '$uriAuth/logout',
-      );
-      httpSuccessHandle(
-        response: res,
-        context: context,
-        onSuccess: () async {
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.clear();
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => const MainScreen()),
-              (route) => false);
-        },
-      );
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const MainScreen()),
+          (route) => false);
+      // Dio dioWithInterceptor = interceptorClass.getDioWithInterceptor();
+      // Response res = await dioWithInterceptor.post(
+      //   '$uriAuth/logout',
+      // );
+      // httpSuccessHandle(
+      //   response: res,
+      //   context: context,
+      //   onSuccess: () async {
+      //     final prefs = await SharedPreferences.getInstance();
+      //     await prefs.clear();
+      //     Navigator.pushAndRemoveUntil(
+      //         context,
+      //         MaterialPageRoute(builder: (context) => const MainScreen()),
+      //         (route) => false);
+      //   },
+      // );
     } catch (e) {
       print('loi dang xuat');
     }

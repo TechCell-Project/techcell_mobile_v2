@@ -42,6 +42,31 @@ class ApiUser {
         context: context,
         onSuccess: () {
           showSnackBarSuccess(context, 'Thay đổi mật khẩu thành công');
+          Navigator.pop(context);
+        },
+      );
+    } catch (e) {
+      showSnackBarError(context, 'Thay đổi thất bại');
+    }
+  }
+
+  Future<void> changeProfileUser(
+      BuildContext context, String firstName, String lastName) async {
+    try {
+      Dio dioWithInterceptor = interceptorClass.getDioWithInterceptor();
+      Response response = await dioWithInterceptor.patch(
+        '$uriAuth/me',
+        data: {
+          'firstName': firstName,
+          'lastName': lastName,
+        },
+      );
+      httpSuccessHandle(
+        response: response,
+        context: context,
+        onSuccess: () {
+          showSnackBarSuccess(context, 'Thanh cong');
+          Navigator.pop(context);
         },
       );
     } catch (e) {
@@ -73,6 +98,8 @@ class ApiUser {
           var userProvider = Provider.of<UserProvider>(context, listen: false);
           user = User.fromJson(jsonEncode(res.data));
           userProvider.setUser(user);
+          print(userProvider.user.createdAt);
+          print(userProvider.user.updatedAt);
         },
       );
     } catch (e, i) {

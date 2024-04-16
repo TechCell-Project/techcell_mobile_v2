@@ -48,4 +48,22 @@ class RegisterApi {
       showSnackBarError(context, 'Đăng ký thất bại');
     }
   }
+
+  Future<void> forgotPassword(BuildContext context, String email) async {
+    try {
+      Response res = await dio.post(
+        '$uriAuth/forgot/password',
+        data: jsonEncode({'email': email}),
+      );
+      httpSuccessHandle(
+        response: res,
+        context: context,
+        onSuccess: () {
+          showSnackBarSuccess(context, 'thanh cong');
+        },
+      );
+    } catch (e) {
+      showSnackBarError(context, 'that bai');
+    }
+  }
 }

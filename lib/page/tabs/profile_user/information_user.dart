@@ -1,12 +1,15 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:single_project/Providers/user_provider.dart';
 import 'package:single_project/api/api_profile_user.dart';
 import 'package:single_project/models/user_model.dart';
 import 'package:single_project/util/constants.dart';
+import 'package:single_project/widgets/button/button_send_requrest.dart';
 import 'package:single_project/widgets/user_widgets/text_in_avatar.dart';
+import 'package:single_project/widgets/user_widgets/widget_uer.dart';
 
 class InformationUserTab extends StatefulWidget {
   User user;
@@ -20,16 +23,21 @@ class InformationUserTab extends StatefulWidget {
 }
 
 class _InformationUserTabState extends State<InformationUserTab> {
+  UserWidget userWidget = UserWidget();
+  TextEditingController firstNameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
+  String avatarLetter = '';
+  String avatarLetterLasName = '';
+  bool check = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
         foregroundColor: primaryColors,
-        backgroundColor: Colors.transparent,
         title: const Text(
-          'Thông tin người dùng',
-          style: TextStyle(color: Colors.black),
+          'Hồ sơ người dùng ',
+          style: TextStyle(color: primaryColors),
         ),
       ),
       body: FutureBuilder<User>(
@@ -41,100 +49,99 @@ class _InformationUserTabState extends State<InformationUserTab> {
             );
           } else if (snapshot.error != null) {
             return Container();
+          } else if (snapshot.hasError || snapshot.data == null) {
+            return Container();
           } else {
             var userProvider =
                 Provider.of<UserProvider>(context, listen: false).user;
-            String avatarLetter = userProvider.firstName[0].toUpperCase();
-            String avatarLetterLasName = userProvider.lastName[0].toUpperCase();
-            return Container(
-              decoration: const BoxDecoration(
-                  color: Color.fromARGB(255, 245, 245, 245)),
-              padding: const EdgeInsets.only(
-                top: 20,
-              ),
-              child: GestureDetector(
-                child: Column(
-                  children: [
-                    if (userProvider.avatar.url.isNotEmpty)
-                      avatarUser(
-                        CircleAvatar(
-                          child: Image(
-                            image: NetworkImage(userProvider.avatar.url),
+
+            if (userProvider.firstName.isNotEmpty &&
+                userProvider.lastName.isNotEmpty) {
+              avatarLetter = userProvider.firstName[0].toUpperCase();
+              avatarLetterLasName = userProvider.lastName[0].toUpperCase();
+            } else {
+              return Container();
+            }
+            return SingleChildScrollView(
+              child: Container(
+                padding: const EdgeInsets.only(
+                  top: 20,
+                ),
+                child: GestureDetector(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (userProvider.avatar.url.isNotEmpty)
+                        userWidget.avatarUser(
+                          CircleAvatar(
+                            backgroundImage:
+                                NetworkImage(userProvider.avatar.url),
+                          ),
+                        )
+                      else
+                        userWidget.avatarUser(
+                          CircleAvatar(
+                            child: TextInAvatar(
+                              textAvatar: avatarLetterLasName + avatarLetter,
+                              width: 140,
+                              height: 140,
+                              fontSized: 50,
+                            ),
                           ),
                         ),
+                      const SizedBox(height: 50),
+                      Column(
+                        children: [
+                          Center(
+                            child: Container(
+                              padding: const EdgeInsets.only(top: 10, right: 3),
+                              width: MediaQuery.of(context).size.width * 0.9,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(
+                                      color: primaryColors.withOpacity(0.5)),
+                                  borderRadius: BorderRadius.circular(20)),
+                              child: Column(
+                                children: [
+                                  userWidget.infoUser('Họ tên:',
+                                      '${userProvider.lastName} ${userProvider.firstName}'),
+                                  userWidget.infoUser(
+                                      'email:', userProvider.email),
+                                  userWidget.infoUser('Ngày tạo tài khoản:',
+                                      formatTimestamp(userProvider.createdAt)),
+                                  userWidget.infoUser('Cập nhật lúc:',
+                                      formatTimestamp(userProvider.updatedAt)),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 40),
+                          Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: ButtonSendrequest(
+                                text: 'Câp nhật',
+                                submit: () {
+                                  lastNameController.text =
+                                      userProvider.lastName;
+                                  firstNameController.text =
+                                      userProvider.firstName;
+                                  userWidget.openDialog(
+                                    context,
+                                    firstNameController,
+                                    lastNameController,
+                                    check,
+                                  );
+                                }),
+                          )
+                        ],
                       )
-                    else
-                      avatarUser(
-                        CircleAvatar(
-                          child: TextInAvatar(
-                            textAvatar: avatarLetterLasName + avatarLetter,
-                            width: 140,
-                            height: 140,
-                            fontSized: 50,
-                          ),
-                        ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             );
           }
         },
-      ),
-    );
-  }
-
-  Widget avatarUser(Widget avatar) {
-    return Center(
-      child: Stack(
-        children: [
-          Container(
-            width: 130,
-            height: 130,
-            decoration: BoxDecoration(
-              border: Border.all(
-                width: 4,
-                color: Colors.white,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  spreadRadius: 2,
-                  blurRadius: 10,
-                  color: Colors.black.withOpacity(0.1),
-                ),
-              ],
-              shape: BoxShape.circle,
-            ),
-            child: avatar,
-          ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: InkWell(
-              onTap: () {
-                // showModalBottomSheet(
-                //     context: context,
-                //     builder: ((context) => bottomSheet(context)));
-              },
-              child: Container(
-                height: 40,
-                width: 40,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    width: 4,
-                    color: Colors.white,
-                  ),
-                  color: primaryColors,
-                ),
-                child: const Icon(
-                  Icons.edit,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
