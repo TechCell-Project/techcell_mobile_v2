@@ -1,10 +1,17 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:single_project/api/api_image.dart';
 import 'package:single_project/api/api_profile_user.dart';
 import 'package:single_project/util/constants.dart';
 import 'package:single_project/widgets/text_fields/text_field.dart';
 
 class UserWidget {
-  Widget avatarUser(Widget avatar) {
+  Widget avatarUser(
+    BuildContext context,
+    Widget avatar,
+    Widget bottomSheet,
+  ) {
     return Center(
       child: Stack(
         children: [
@@ -32,9 +39,8 @@ class UserWidget {
             right: 0,
             child: InkWell(
               onTap: () {
-                // showModalBottomSheet(
-                //     context: context,
-                //     builder: ((context) => bottomSheet(context)));
+                showModalBottomSheet(
+                    context: context, builder: ((context) => bottomSheet));
               },
               child: Container(
                 height: 40,
@@ -150,6 +156,34 @@ class UserWidget {
           ],
         );
       },
+    );
+  }
+
+  Widget buttonChangeAvatar(BuildContext context, File file) {
+    return Center(
+      child: InkWell(
+        onTap: () {
+          AvatarApi().postImage(context: context, image: file);
+        },
+        child: Container(
+          height: 40,
+          width: 100,
+          decoration: BoxDecoration(
+              color: primaryColors, borderRadius: BorderRadius.circular(10)),
+          child: const Padding(
+            padding: EdgeInsets.all(3.0),
+            child: Row(
+              children: [
+                Text(
+                  'Thay đổi ',
+                  style: TextStyle(color: Colors.white),
+                ),
+                Icon(Icons.image, color: Colors.white),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

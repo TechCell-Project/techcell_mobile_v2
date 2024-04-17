@@ -1,7 +1,8 @@
 // ignore_for_file: must_be_immutable
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:single_project/Providers/user_provider.dart';
 import 'package:single_project/api/api_profile_user.dart';
@@ -10,6 +11,7 @@ import 'package:single_project/util/constants.dart';
 import 'package:single_project/widgets/button/button_send_requrest.dart';
 import 'package:single_project/widgets/user_widgets/text_in_avatar.dart';
 import 'package:single_project/widgets/user_widgets/widget_uer.dart';
+import 'package:image_picker/image_picker.dart';
 
 class InformationUserTab extends StatefulWidget {
   User user;
@@ -29,6 +31,7 @@ class _InformationUserTabState extends State<InformationUserTab> {
   String avatarLetter = '';
   String avatarLetterLasName = '';
   bool check = false;
+  File? _selectedImage;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,22 +76,39 @@ class _InformationUserTabState extends State<InformationUserTab> {
                     children: [
                       if (userProvider.avatar.url.isNotEmpty)
                         userWidget.avatarUser(
+                          context,
                           CircleAvatar(
-                            backgroundImage:
-                                NetworkImage(userProvider.avatar.url),
+                            backgroundImage: _selectedImage != null
+                                ? FileImage(_selectedImage!)
+                                : NetworkImage(userProvider.avatar.url)
+                                    as ImageProvider,
                           ),
+                          bottomSheet(context),
                         )
                       else
                         userWidget.avatarUser(
+                          context,
                           CircleAvatar(
-                            child: TextInAvatar(
-                              textAvatar: avatarLetterLasName + avatarLetter,
-                              width: 140,
-                              height: 140,
-                              fontSized: 50,
-                            ),
+                            backgroundImage: _selectedImage != null
+                                ? FileImage(_selectedImage!)
+                                : null,
+                            child: _selectedImage == null
+                                ? TextInAvatar(
+                                    textAvatar:
+                                        avatarLetterLasName + avatarLetter,
+                                    width: 140,
+                                    height: 140,
+                                    fontSized: 50,
+                                  )
+                                : null,
                           ),
+                          bottomSheet(context),
                         ),
+                      const SizedBox(height: 10),
+                      if (_selectedImage != null && check == false)
+                        userWidget.buttonChangeAvatar(context, _selectedImage!)
+                      else
+                        Container(),
                       const SizedBox(height: 50),
                       Column(
                         children: [
@@ -142,6 +162,62 @@ class _InformationUserTabState extends State<InformationUserTab> {
             );
           }
         },
+      ),
+    );
+  }
+
+  Future pickImageFromGallery(BuildContext context) async {
+    final picker = ImagePicker();
+    final returnedImage = await picker.pickImage(source: ImageSource.gallery);
+    if (returnedImage == null) {
+      return;
+    } else {
+      setState(() {
+        _selectedImage = File(returnedImage.path);
+      });
+    }
+  }
+
+  Future pickImageFromCamera(BuildContext context) async {
+    final returnedImage =
+        await ImagePicker().pickImage(source: ImageSource.camera);
+    if (returnedImage == null) {
+      return;
+    } else {
+      setState(() {
+        _selectedImage = File(returnedImage.path);
+      });
+    }
+  }
+
+  Widget bottomSheet(BuildContext context) {
+    return Container(
+      height: 100,
+      width: MediaQuery.of(context).size.width,
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      child: Column(
+        children: [
+          const Text(
+            'Chọn ảnh',
+            style: TextStyle(fontSize: 20),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                  onPressed: () {
+                    pickImageFromCamera(context);
+                  },
+                  icon: const Icon(Icons.camera)),
+              IconButton(
+                  onPressed: () {
+                    pickImageFromGallery(context);
+                  },
+                  icon: const Icon(Icons.image)),
+            ],
+          )
+        ],
       ),
     );
   }

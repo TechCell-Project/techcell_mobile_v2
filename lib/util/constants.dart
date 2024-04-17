@@ -21,7 +21,7 @@ String formatTimestamp(String timestamp) {
 
   // Format the date and time
   String formattedDate =
-      DateFormat('HH:mm - dd \'Tháng\' M, y').format(dateTime);
+      DateFormat('hh:mm - dd \'Tháng\' M, y').format(dateTime);
 
   return formattedDate;
 }
