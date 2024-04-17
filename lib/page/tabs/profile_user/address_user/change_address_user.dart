@@ -1,7 +1,12 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/cupertino.dart';
+import 'package:single_project/models/address_model.dart';
 
 class ChangeAdressUser extends StatefulWidget {
-  const ChangeAdressUser({super.key});
+  AddressModel addressUser;
+  int index;
+  ChangeAdressUser({super.key, required this.addressUser, required this.index});
 
   @override
   State<ChangeAdressUser> createState() => _ChangeAdressUserState();

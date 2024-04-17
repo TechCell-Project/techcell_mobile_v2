@@ -7,6 +7,7 @@ import 'package:single_project/page/tabs/profile_user/address_user/address_user.
 import 'package:single_project/page/tabs/profile_user/change_password_user.dart';
 import 'package:single_project/page/tabs/profile_user/information_user.dart';
 import 'package:single_project/page/tabs/profile_user/order_user.dart';
+import 'package:single_project/util/constants.dart';
 import 'package:single_project/widgets/button/button_send_requrest.dart';
 import 'package:single_project/widgets/user_widgets/text_in_avatar.dart';
 
@@ -126,15 +127,6 @@ class _ProfileUserState extends State<ProfileUser> {
             }
           }
         },
-      ),
-    );
-  }
-
-  Widget divider() {
-    return const Padding(
-      padding: EdgeInsets.all(8),
-      child: Divider(
-        thickness: 0.5,
       ),
     );
   }

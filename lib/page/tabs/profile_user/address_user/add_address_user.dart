@@ -5,6 +5,8 @@ import 'package:single_project/util/constants.dart';
 import 'package:single_project/util/validator.dart';
 import 'package:single_project/widgets/button/button_send_requrest.dart';
 import 'package:single_project/widgets/text_fields/text_field_address.dart';
+import 'package:single_project/widgets/user_widgets/defaul_address.dart';
+import 'package:single_project/widgets/user_widgets/select_button.dart';
 
 class AddAdressUser extends StatefulWidget {
   const AddAdressUser({super.key});
@@ -18,7 +20,7 @@ class _AddAdressUserState extends State<AddAdressUser> {
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController detailController = TextEditingController();
-  final TextEditingController addressNameController = TextEditingController();
+  final TextEditingController addressTypeController = TextEditingController();
   ApiAddress address = ApiAddress();
   List<ProvinceLevel> provinceLevel = [];
   List<DistrictLevel> districtsLevel = [];
@@ -101,6 +103,44 @@ class _AddAdressUserState extends State<AddAdressUser> {
                       ],
                     ),
                   ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Padding(
+                padding: EdgeInsets.all(10),
+                child: Text(
+                  'Loại địa chỉ',
+                  style: TextStyle(color: Color.fromARGB(255, 114, 114, 114)),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                ),
+                child: const Row(
+                  children: [
+                    Text('Loại địa chỉ'),
+                    Spacer(),
+                    SelectButton(),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: const BoxDecoration(
+                    color: Colors.white,
+                    border: Border(
+                      top: BorderSide(width: 0.4),
+                    )),
+                child: Row(
+                  children: [
+                    const Text('Chọn làm mặc định'),
+                    const Spacer(),
+                    SwitchDefaulAddAddress(
+                      light: false,
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 30),

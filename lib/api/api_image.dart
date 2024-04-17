@@ -33,7 +33,6 @@ class AvatarApi {
           contentType: MediaType('image', '.$fileType'),
         ),
       });
-      print(formData.boundary);
       Response response =
           await dioWithInterceptor.post('https://api.techcell.cloud/api/images',
               data: formData,
