@@ -48,6 +48,47 @@ class ApiAddress {
     }
   }
 
+  void updateAddress(
+      List<AddressModel> addresses, AddressModel addressModel, int index) {
+    if (index >= 0 && index < addresses.length) {
+      addresses[index] = AddressModel(
+        type: addressModel.type,
+        customerName: addressModel.customerName,
+        phoneNumbers: addressModel.phoneNumbers,
+        provinceLevel: addressModel.provinceLevel,
+        districtLevel: addressModel.districtLevel,
+        wardLevel: addressModel.wardLevel,
+        detail: addressModel.detail,
+        isDefault: addressModel.isDefault,
+      );
+    }
+  }
+
+  Future<void> changeAdreesUser(
+    BuildContext context,
+    List<AddressModel> address,
+  ) async {
+    try {
+      Dio dioWithInterceptor = interceptorClass.getDioWithInterceptor();
+      Response res = await dioWithInterceptor.patch(
+        '$uriAuth/me',
+        data: {"address": address},
+        options: Options(headers: header()),
+      );
+      httpSuccessHandle(
+        response: res,
+        context: context,
+        onSuccess: () {
+          Navigator.pop(context);
+          showSnackBarSuccess(context, 'Thay đổi thành công');
+        },
+      );
+    } catch (e) {
+      print(e);
+      showSnackBarError(context, 'Thay đổi thất bại');
+    }
+  }
+
   Future<List<ProvinceLevel>> getProvince() async {
     List<ProvinceLevel> provinces = [];
     final res = await dio.get('$uriAddress/provinces');
