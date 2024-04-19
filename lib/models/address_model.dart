@@ -8,6 +8,7 @@ class AddressModel {
   bool isDefault;
   String customerName;
   String type;
+  String phoneNumbers;
 
   AddressModel({
     required this.provinceLevel,
@@ -17,6 +18,7 @@ class AddressModel {
     required this.isDefault,
     required this.customerName,
     required this.type,
+    required this.phoneNumbers,
   });
   factory AddressModel.fromRawJson(String str) =>
       AddressModel.fromJson(json.decode(str));
@@ -29,6 +31,7 @@ class AddressModel {
         isDefault: json["isDefault"] ?? true,
         customerName: json["customerName"],
         type: json['type'],
+        phoneNumbers: json['phoneNumbers'] ?? '',
       );
 
   Map<String, dynamic> toJson() => {
@@ -39,13 +42,14 @@ class AddressModel {
         "isDefault": isDefault,
         "customerName": customerName,
         "type": type,
+        "phoneNumbers": phoneNumbers,
       };
 }
 
 class ProvinceLevel {
   int provinceId;
-  String provinceName;
-  ProvinceLevel({required this.provinceId, required this.provinceName});
+  String? provinceName;
+  ProvinceLevel({required this.provinceId, this.provinceName});
   factory ProvinceLevel.fromRawJson(String str) =>
       ProvinceLevel.fromJson(json.decode(str));
 
@@ -64,8 +68,8 @@ class ProvinceLevel {
 
 class DistrictLevel {
   int districtId;
-  String districtName;
-  DistrictLevel({required this.districtId, required this.districtName});
+  String? districtName;
+  DistrictLevel({required this.districtId, this.districtName});
   factory DistrictLevel.fromRawJson(String str) =>
       DistrictLevel.fromJson(json.decode(str));
 
@@ -83,21 +87,21 @@ class DistrictLevel {
 }
 
 class WardLevel {
-  String wardId;
-  String wardName;
-  WardLevel({required this.wardId, required this.wardName});
+  String wardCode;
+  String? wardName;
+  WardLevel({required this.wardCode, this.wardName});
   factory WardLevel.fromRawJson(String str) =>
       WardLevel.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
   factory WardLevel.fromJson(Map<String, dynamic> json) => WardLevel(
-        wardId: json["wardId"] ?? '',
+        wardCode: json["wardCode"] ?? '',
         wardName: json["wardName"] ?? '',
       );
 
   Map<String, dynamic> toJson() => {
-        "wardId": wardId,
+        "wardCode": wardCode,
         "wardName": wardName,
       };
 }

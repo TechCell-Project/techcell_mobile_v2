@@ -7,6 +7,7 @@ import 'package:single_project/models/address_model.dart';
 import 'package:single_project/page/tabs/profile_user/address_user/add_address_user.dart';
 import 'package:single_project/page/tabs/profile_user/address_user/change_address_user.dart';
 import 'package:single_project/util/constants.dart';
+import 'package:single_project/widgets/user_widgets/widget_uer.dart';
 
 class AddreesUserTab extends StatefulWidget {
   const AddreesUserTab({super.key});
@@ -17,6 +18,7 @@ class AddreesUserTab extends StatefulWidget {
 
 class _AddreesUserTabState extends State<AddreesUserTab> {
   List<AddressModel> addressUser = [];
+  UserWidget userWidget = UserWidget();
 
   @override
   Widget build(BuildContext context) {
@@ -115,17 +117,19 @@ class _AddreesUserTabState extends State<AddreesUserTab> {
                                           thickness: 1,
                                         ),
                                       ),
-                                      // SizedBox(
-                                      //   width: MediaQuery.of(context).size.width * 0.3,
-                                      //   child: Text(
-                                      //     addressUser[index].phoneNumbers,
-                                      //     style: const TextStyle(
-                                      //       color: Colors.grey,
-                                      //       fontSize: 16,
-                                      //       fontWeight: FontWeight.w500,
-                                      //     ),
-                                      //   ),
-                                      // )
+                                      SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.3,
+                                        child: Text(
+                                          addressUser[index].phoneNumbers,
+                                          style: const TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      )
                                     ],
                                   ),
                                 ),
@@ -135,8 +139,8 @@ class _AddreesUserTabState extends State<AddreesUserTab> {
                                     Padding(
                                       padding: const EdgeInsets.only(
                                           left: 10.0, top: 5, bottom: 5),
-                                      child:
-                                          textInfo(addressUser[index].detail),
+                                      child: userWidget
+                                          .textInfo(addressUser[index].detail),
                                     ),
                                   ],
                                 ),
@@ -145,18 +149,18 @@ class _AddreesUserTabState extends State<AddreesUserTab> {
                                   padding: const EdgeInsets.only(left: 10.0),
                                   child: Row(
                                     children: [
-                                      textInfo(
-                                          '${addressUser[index].wardLevel.wardId}, '),
-                                      textInfo(
-                                          '${addressUser[index].provinceLevel.provinceId}, '),
-                                      textInfo(
-                                          '${addressUser[index].districtLevel.districtId}, '),
+                                      userWidget.textInfo(
+                                          '${addressUser[index].wardLevel.wardName}, '),
+                                      userWidget.textInfo(
+                                          '${addressUser[index].districtLevel.districtName}, '),
+                                      userWidget.textInfo(
+                                          '${addressUser[index].provinceLevel.provinceName}, '),
                                     ],
                                   ),
                                 ),
                                 const SizedBox(height: 5),
                                 if (addressUser[index].isDefault == true)
-                                  isDefault()
+                                  userWidget.isDefault()
                                 else
                                   Container(),
                               ],
@@ -205,39 +209,6 @@ class _AddreesUserTabState extends State<AddreesUserTab> {
               );
             }
           }),
-    );
-  }
-
-  Widget isDefault() {
-    return Padding(
-      padding: const EdgeInsets.only(
-        left: 10,
-        top: 5,
-        bottom: 5,
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        decoration: BoxDecoration(
-          border: Border.all(color: primaryColors),
-        ),
-        child: const Text(
-          'Mặc định',
-          style: TextStyle(
-            color: primaryColors,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget textInfo(String text) {
-    return Text(
-      text,
-      style: const TextStyle(
-        color: Colors.grey,
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
-      ),
     );
   }
 }

@@ -61,7 +61,7 @@ class AvatarApi {
     return null;
   }
 
-  Future<void> changePasswordUser(BuildContext context, String imageId) async {
+  Future<void> changeAvatarUser(BuildContext context, String imageId) async {
     try {
       Dio dioWithInterceptor = interceptorClass.getDioWithInterceptor();
       Response res = await dioWithInterceptor.patch(

@@ -4,6 +4,8 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
+import 'package:single_project/Providers/user_provider.dart';
 import 'package:single_project/models/address_model.dart';
 import 'package:single_project/util/constants.dart';
 import 'package:single_project/util/interceptor.dart';
@@ -24,19 +26,24 @@ class ApiAddress {
   ) async {
     try {
       Dio dioWithInterceptor = interceptorClass.getDioWithInterceptor();
+      var userProvider = Provider.of<UserProvider>(context, listen: false);
+      List<AddressModel> allAddress = userProvider.user.address;
+      allAddress.add(address);
       Response res = await dioWithInterceptor.patch(
         '$uriAuth/me',
-        data: jsonEncode(address.toJson()),
+        data: {"address": allAddress},
         options: Options(headers: header()),
       );
       httpSuccessHandle(
         response: res,
         context: context,
         onSuccess: () {
+          Navigator.pop(context);
           showSnackBarSuccess(context, 'Thay đổi thành công');
         },
       );
     } catch (e) {
+      print(e);
       showSnackBarError(context, 'Thay đổi thất bại');
     }
   }

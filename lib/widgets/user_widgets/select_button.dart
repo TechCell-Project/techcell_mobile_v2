@@ -1,7 +1,10 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
 
 class SelectButton extends StatefulWidget {
-  const SelectButton({super.key});
+  final Function(String) onTypeSelected;
+  const SelectButton({super.key, required this.onTypeSelected});
 
   @override
   State<SelectButton> createState() => _SelectButtonState();
@@ -9,21 +12,28 @@ class SelectButton extends StatefulWidget {
 
 class _SelectButtonState extends State<SelectButton> {
   bool vertical = false;
-  List<Widget> typeAddress = <Widget>[
+  String type = '';
+  List<Widget> typeAddress = [
     const Text('Nhà'),
     const Text('Công ty'),
   ];
-  final List<bool> _selectedTypeAddress = <bool>[true, false];
+  final List<bool> _selectedTypeAddress = <bool>[false, false];
   @override
   Widget build(BuildContext context) {
     return ToggleButtons(
       direction: vertical ? Axis.vertical : Axis.horizontal,
       onPressed: (int index) {
         setState(() {
-          // The button that is tapped is set to true, and the others to false.
           for (int i = 0; i < _selectedTypeAddress.length; i++) {
             _selectedTypeAddress[i] = i == index;
           }
+          if (_selectedTypeAddress[0]) {
+            type = 'Nhà';
+          }
+          if (_selectedTypeAddress[1]) {
+            type = 'Công ty';
+          }
+          widget.onTypeSelected(type);
         });
       },
       borderRadius: const BorderRadius.all(Radius.circular(8)),

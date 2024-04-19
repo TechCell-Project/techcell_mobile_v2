@@ -186,4 +186,37 @@ class UserWidget {
       ),
     );
   }
+
+ Widget isDefault() {
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: 10,
+        top: 5,
+        bottom: 5,
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          border: Border.all(color: primaryColors),
+        ),
+        child: const Text(
+          'Mặc định',
+          style: TextStyle(
+            color: primaryColors,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget textInfo(String text) {
+    return Text(
+      text,
+      style: const TextStyle(
+        color: Colors.grey,
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+      ),
+    );
+  }
 }

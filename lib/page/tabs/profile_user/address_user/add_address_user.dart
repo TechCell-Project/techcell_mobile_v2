@@ -21,6 +21,7 @@ class _AddAdressUserState extends State<AddAdressUser> {
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController detailController = TextEditingController();
   final TextEditingController addressTypeController = TextEditingController();
+  String typeAddress = '';
   ApiAddress address = ApiAddress();
   List<ProvinceLevel> provinceLevel = [];
   List<DistrictLevel> districtsLevel = [];
@@ -37,6 +38,37 @@ class _AddAdressUserState extends State<AddAdressUser> {
   bool isDefaul = false;
 
   String textAddressLevel = 'Chưa chọn thành phố nào';
+  @override
+  void initState() {
+    super.initState();
+    address.getProvince().then((data) {
+      setState(() {
+        provinceLevel = data;
+      });
+    });
+  }
+
+  void addAddress() {
+    if (_formKey.currentState!.validate()) {
+      address.addAdressUser(
+        context,
+        AddressModel(
+          type: typeAddress,
+          customerName: fullNameController.text,
+          phoneNumbers: phoneNumberController.text,
+          provinceLevel: ProvinceLevel(
+            provinceId: selectedProvince!.provinceId,
+          ),
+          districtLevel: DistrictLevel(
+            districtId: selecttedDistricts!.districtId,
+          ),
+          wardLevel: WardLevel(wardCode: selectedWards!.wardCode),
+          detail: detailController.text,
+          isDefault: isDefaul,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,27 +115,129 @@ class _AddAdressUserState extends State<AddAdressUser> {
                 ),
               ),
               Container(
-                height: 50,
                 decoration: const BoxDecoration(
                   border: Border(
                     bottom: BorderSide(color: Colors.grey, width: 0.4),
                   ),
                   color: Colors.white,
                 ),
-                child: InkWell(
-                  onTap: () {
-                    ApiAddress().getProvince();
-                  },
-                  child: const Padding(
-                    padding:
-                        EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 5),
-                    child: Row(
-                      children: [
-                        Text('Chọn thành phố: '),
-                      ],
-                    ),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      left: 10, right: 10, bottom: 5, top: 5),
+                  child: Row(
+                    children: [
+                      const Text('Chọn thành phố: '),
+                      const Spacer(),
+                      DropdownButton<ProvinceLevel>(
+                        hint: const Text(''),
+                        value: selectedProvince,
+                        onChanged: (newValue) {
+                          setState(() {
+                            selectedProvince = newValue;
+                            isProvinceSelected = true;
+                            selecttedDistricts = null;
+                            selectedWards = null;
+                            address
+                                .getDistrict(newValue!.provinceId)
+                                .then((data) {
+                              setState(() {
+                                districtsLevel = data;
+                              });
+                            });
+                          });
+                        },
+                        items: provinceLevel.map((ProvinceLevel? item) {
+                          return DropdownMenuItem<ProvinceLevel>(
+                            value: item,
+                            child: Text(item!.provinceName!),
+                          );
+                        }).toList(),
+                      ),
+                    ],
                   ),
                 ),
+              ),
+              if (isProvinceSelected)
+                Container(
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: Colors.grey, width: 0.4),
+                    ),
+                    color: Colors.white,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 10, right: 10, bottom: 5, top: 5),
+                    child: Row(children: [
+                      const Text('Chọn Quận/Huyện: '),
+                      const Spacer(),
+                      DropdownButton<DistrictLevel>(
+                        hint: const Text(''),
+                        value: selecttedDistricts,
+                        onChanged: (DistrictLevel? newValue) {
+                          setState(() {
+                            selecttedDistricts = newValue;
+                            isDistrictSelected = true;
+                            selectedWards = null;
+                            address
+                                .getWards(newValue!.districtId)
+                                .then((value) {
+                              setState(() {
+                                wardLevel = value;
+                              });
+                            });
+                          });
+                        },
+                        items: districtsLevel.map((DistrictLevel? item) {
+                          return DropdownMenuItem<DistrictLevel>(
+                            value: item,
+                            child: Text(item!.districtName!),
+                          );
+                        }).toList(),
+                      ),
+                    ]),
+                  ),
+                )
+              else
+                Container(),
+              if (isDistrictSelected)
+                Container(
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: Colors.grey, width: 0.4),
+                    ),
+                    color: Colors.white,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 10, right: 10, bottom: 5, top: 5),
+                    child: Row(children: [
+                      const Text('Chọn Xã/Phường: '),
+                      const Spacer(),
+                      DropdownButton<WardLevel>(
+                        hint: const Text(''),
+                        value: selectedWards,
+                        onChanged: (newValue) {
+                          setState(() {
+                            selectedWards = newValue;
+                          });
+                        },
+                        items: wardLevel.map((WardLevel? item) {
+                          return DropdownMenuItem<WardLevel>(
+                            value: item,
+                            child: Text(item!.wardName!),
+                          );
+                        }).toList(),
+                      ),
+                    ]),
+                  ),
+                )
+              else
+                Container(),
+              TextformAddress(
+                controller: detailController,
+                hint: 'Tên đường, Tòa nhà, Số Nhà',
+                validate: (value) => Validator.validateText(value ?? ''),
               ),
               const SizedBox(height: 10),
               const Padding(
@@ -118,11 +252,17 @@ class _AddAdressUserState extends State<AddAdressUser> {
                 decoration: const BoxDecoration(
                   color: Colors.white,
                 ),
-                child: const Row(
+                child: Row(
                   children: [
-                    Text('Loại địa chỉ'),
-                    Spacer(),
-                    SelectButton(),
+                    const Text('Loại địa chỉ'),
+                    const Spacer(),
+                    SelectButton(
+                      onTypeSelected: (type) {
+                        setState(() {
+                          typeAddress = type;
+                        });
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -148,7 +288,9 @@ class _AddAdressUserState extends State<AddAdressUser> {
                 padding: const EdgeInsets.all(10.0),
                 child: ButtonSendrequest(
                   text: 'Thêm địa chỉ mới',
-                  submit: () {},
+                  submit: () {
+                    addAddress();
+                  },
                 ),
               ),
             ],
