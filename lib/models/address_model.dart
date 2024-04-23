@@ -28,7 +28,7 @@ class AddressModel {
         districtLevel: DistrictLevel.fromJson(json["districtLevel"]),
         wardLevel: WardLevel.fromJson(json["wardLevel"]),
         detail: json["detail"],
-        isDefault: json["isDefault"] ?? true,
+        isDefault: json["isDefault"] ?? false,
         customerName: json["customerName"],
         type: json['type'],
         phoneNumbers: json['phoneNumbers'] ?? '',

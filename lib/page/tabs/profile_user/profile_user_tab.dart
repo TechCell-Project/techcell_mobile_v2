@@ -48,78 +48,80 @@ class _ProfileUserState extends State<ProfileUser> {
               String avatarLetter = user.firstName[0].toUpperCase();
               String avatarLetterLasName = user.lastName[0].toUpperCase();
               return Scaffold(
-                body: SafeArea(
-                  child: Center(
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 35),
-                        Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Row(
-                            children: [
-                              if (user.avatar.url.isEmpty)
-                                TextInAvatar(
-                                  textAvatar:
-                                      avatarLetter + avatarLetterLasName,
-                                  width: 70,
-                                  height: 70,
-                                  fontSized: 24,
-                                )
-                              else
-                                Container(
-                                  width: 50,
-                                  height: 50,
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.grey,
+                body: SingleChildScrollView(
+                  child: SafeArea(
+                    child: Center(
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 35),
+                          Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Row(
+                              children: [
+                                if (user.avatar.url.isEmpty)
+                                  TextInAvatar(
+                                    textAvatar:
+                                        avatarLetter + avatarLetterLasName,
+                                    width: 70,
+                                    height: 70,
+                                    fontSized: 24,
+                                  )
+                                else
+                                  Container(
+                                    width: 50,
+                                    height: 50,
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.grey,
+                                    ),
+                                    child: Image(
+                                      image: NetworkImage(user.avatar.url),
+                                    ),
                                   ),
-                                  child: Image(
-                                    image: NetworkImage(user.avatar.url),
-                                  ),
+                                const SizedBox(width: 10),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          user.lastName,
+                                          style: const TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        const SizedBox(width: 5),
+                                        Text(
+                                          user.firstName,
+                                          style: const TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                    Text(user.email),
+                                  ],
                                 ),
-                              const SizedBox(width: 10),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        user.lastName,
-                                        style: const TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        user.firstName,
-                                        style: const TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                  Text(user.email),
-                                ],
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                        divider(),
-                        colorTitles(user),
-                        const SizedBox(height: 4),
-                        divider(),
-                        bwTitles(),
-                        const SizedBox(height: 20),
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: ButtonSendrequest(
-                            text: 'Đăng xuất',
-                            submit: () {
-                              ApiLogin().logout(context);
-                            },
+                          divider(),
+                          colorTitles(user),
+                          const SizedBox(height: 4),
+                          divider(),
+                          bwTitles(),
+                          const SizedBox(height: 20),
+                          Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: ButtonSendrequest(
+                              text: 'Đăng xuất',
+                              submit: () {
+                                ApiLogin().logout(context);
+                              },
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),

@@ -15,6 +15,9 @@ Widget divider() {
   );
 }
 
+final formatCurrency =
+    NumberFormat.currency(locale: 'id', decimalDigits: 0, name: 'đ');
+
 String formatTimestamp(String timestamp) {
   // Parse the input timestamp
   DateTime dateTime = DateTime.parse(timestamp);
@@ -24,4 +27,10 @@ String formatTimestamp(String timestamp) {
       DateFormat('hh:mm - dd \'Tháng\' M, y').format(dateTime);
 
   return formattedDate;
+}
+
+extension MyExtension on String {
+  String capitalize() {
+    return '${this[0].toUpperCase()}${this.substring(1).toLowerCase()}';
+  }
 }

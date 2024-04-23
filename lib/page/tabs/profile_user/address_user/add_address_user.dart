@@ -257,6 +257,7 @@ class _AddAdressUserState extends State<AddAdressUser> {
                     const Text('Loại địa chỉ'),
                     const Spacer(),
                     SelectButton(
+                      selectedTypeAddress: const [true, false],
                       onTypeSelected: (type) {
                         setState(() {
                           typeAddress = type;

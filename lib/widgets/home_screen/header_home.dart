@@ -16,8 +16,8 @@ class HeaderHome extends StatefulWidget {
 class _HeaderState extends State<HeaderHome> {
   late Color _backgroundColor;
   late Color _colorIcon;
-  late double _opacity;
-  late double _offset;
+  double _opacity = 0.0;
+  double _offset = 0.0;
   final _opacityMax = 0.01;
 
   _onScroll() {

@@ -4,7 +4,12 @@ import 'package:flutter/material.dart';
 
 class SelectButton extends StatefulWidget {
   final Function(String) onTypeSelected;
-  const SelectButton({super.key, required this.onTypeSelected});
+  List<bool> selectedTypeAddress;
+  SelectButton({
+    super.key,
+    required this.onTypeSelected,
+    required this.selectedTypeAddress,
+  });
 
   @override
   State<SelectButton> createState() => _SelectButtonState();
@@ -17,20 +22,19 @@ class _SelectButtonState extends State<SelectButton> {
     const Text('Nhà'),
     const Text('Công ty'),
   ];
-  final List<bool> _selectedTypeAddress = <bool>[false, false];
   @override
   Widget build(BuildContext context) {
     return ToggleButtons(
       direction: vertical ? Axis.vertical : Axis.horizontal,
       onPressed: (int index) {
         setState(() {
-          for (int i = 0; i < _selectedTypeAddress.length; i++) {
-            _selectedTypeAddress[i] = i == index;
+          for (int i = 0; i < widget.selectedTypeAddress.length; i++) {
+            widget.selectedTypeAddress[i] = i == index;
           }
-          if (_selectedTypeAddress[0]) {
+          if (widget.selectedTypeAddress[0]) {
             type = 'Nhà';
           }
-          if (_selectedTypeAddress[1]) {
+          if (widget.selectedTypeAddress[1]) {
             type = 'Công ty';
           }
           widget.onTypeSelected(type);
@@ -45,7 +49,7 @@ class _SelectButtonState extends State<SelectButton> {
         minHeight: 40.0,
         minWidth: 80.0,
       ),
-      isSelected: _selectedTypeAddress,
+      isSelected: widget.selectedTypeAddress,
       children: typeAddress,
     );
   }

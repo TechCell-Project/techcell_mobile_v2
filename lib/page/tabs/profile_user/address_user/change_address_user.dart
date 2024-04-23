@@ -1,6 +1,5 @@
 // ignore_for_file: must_be_immutable
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:single_project/Providers/user_provider.dart';
@@ -34,6 +33,7 @@ class _ChangeAdressUserState extends State<ChangeAdressUser> {
   final TextEditingController addressNameController = TextEditingController();
 
   String typeAddress = '';
+  List<bool> type = [false, false];
 
   ApiAddress address = ApiAddress();
   List<ProvinceLevel> provinceLevel = [];
@@ -53,6 +53,19 @@ class _ChangeAdressUserState extends State<ChangeAdressUser> {
       });
     }
     await address.changeAdreesUser(context, addressUser);
+  }
+
+  List<bool> selected() {
+    if (widget.addressUser.type == 'Nhà') {
+      setState(() {
+        type = [true, false];
+      });
+    } else if (widget.addressUser.type == 'Công ty') {
+      setState(() {
+        type = [false, true];
+      });
+    }
+    return type;
   }
 
   updateAddressUser() async {
@@ -324,6 +337,7 @@ class _ChangeAdressUserState extends State<ChangeAdressUser> {
                     const Text('Loại địa chỉ'),
                     const Spacer(),
                     SelectButton(
+                      selectedTypeAddress: selected(),
                       onTypeSelected: (type) {
                         setState(() {
                           typeAddress = type;
