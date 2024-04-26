@@ -6,6 +6,8 @@ const primaryText = TextStyle(fontSize: 16, color: Colors.black);
 
 String uriAuth = 'https://api.techcell.cloud/api/auth';
 String uriAddress = 'https://api.techcell.cloud/api/address';
+String uriCart = 'https://api.techcell.cloud/api/carts';
+String uriOrder = 'https://api.techcell.cloud/api/orders';
 Widget divider() {
   return const Padding(
     padding: EdgeInsets.all(8),

@@ -28,16 +28,12 @@ class _SelectButtonState extends State<SelectButton> {
       direction: vertical ? Axis.vertical : Axis.horizontal,
       onPressed: (int index) {
         setState(() {
+          List<bool> updatedList = List.from(widget.selectedTypeAddress);
           for (int i = 0; i < widget.selectedTypeAddress.length; i++) {
-            widget.selectedTypeAddress[i] = i == index;
+            updatedList[i] = i == index;
           }
-          if (widget.selectedTypeAddress[0]) {
-            type = 'Nhà';
-          }
-          if (widget.selectedTypeAddress[1]) {
-            type = 'Công ty';
-          }
-          widget.onTypeSelected(type);
+          widget.onTypeSelected(
+              widget.selectedTypeAddress[index] ? 'Nhà' : 'Công ty');
         });
       },
       borderRadius: const BorderRadius.all(Radius.circular(8)),

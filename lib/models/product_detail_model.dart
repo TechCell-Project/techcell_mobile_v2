@@ -77,11 +77,11 @@ class ProductImage {
 }
 
 class ProductVariation {
-  final String skuId;
-  final ProductPrice price;
-  final List<ProductAttribute> attributes;
-  final ProductImage image;
-  final List<String> tags;
+  String skuId;
+  ProductPrice price;
+  List<ProductAttribute> attributes;
+  ProductImage image;
+  List<String> tags;
 
   ProductVariation({
     required this.skuId,

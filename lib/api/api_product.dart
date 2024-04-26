@@ -2,9 +2,10 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
+import 'package:single_project/Providers/product_provider.dart';
 import 'package:single_project/models/product_detail_model.dart';
 import 'package:single_project/models/product_model.dart';
-import 'package:single_project/page/tabs/product/product_detail.dart';
 import 'package:single_project/util/snackbar.dart';
 
 class ProductApi {
@@ -23,9 +24,7 @@ class ProductApi {
           listProduct = ListProductModel.fromJson(responseData);
         },
       );
-    } catch (e, i) {
-      print(e);
-      print(i);
+    } catch (e) {
       showSnackBarError(context, 'that bai');
     }
     return listProduct;
@@ -47,9 +46,7 @@ class ProductApi {
           listProduct = ListProductModel.fromJson(responseData);
         },
       );
-    } catch (e, i) {
-      print(e);
-      print(i);
+    } catch (e) {
       showSnackBarError(context, 'that bai');
     }
     return listProduct;
@@ -65,6 +62,8 @@ class ProductApi {
         images: [],
         variations: []);
     try {
+      var productProvider =
+          Provider.of<ProductProvider>(context, listen: false);
       Response res =
           await dio.get('https://api.techcell.cloud/api/products/$id');
       httpSuccessHandle(
@@ -73,12 +72,10 @@ class ProductApi {
           onSuccess: () {
             Map<String, dynamic> responseData = res.data;
             productDetail = ProductDetailModel.fromJson(responseData);
-
-            print(productDetail);
+            productProvider.setProductDetailModel(productDetail);
           });
-    } catch (e, i) {
-      print(i);
-      print(e);
+    } catch (e) {
+      showSnackBarError(context, 'that bai');
     }
     return productDetail;
   }

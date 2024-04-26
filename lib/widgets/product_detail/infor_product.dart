@@ -7,10 +7,14 @@ import 'package:single_project/util/constants.dart';
 
 class InforProduct extends StatefulWidget {
   ProductDetailModel productDetail;
+  int basePrice;
+  int specialPrice;
 
   InforProduct({
     super.key,
     required this.productDetail,
+    required this.basePrice,
+    required this.specialPrice,
   });
 
   @override
@@ -41,14 +45,13 @@ class _InforProductState extends State<InforProduct> {
           physics: const NeverScrollableScrollPhysics(),
           itemCount: widget.productDetail.variations.length,
           itemBuilder: (context, index) {
-            final variation = widget.productDetail.variations[index];
             if (index == 0) {
               return Column(
                 children: [
                   Row(
                     children: [
                       Text(
-                        formatCurrency.format(variation.price.special),
+                        formatCurrency.format(widget.specialPrice),
                         style: const TextStyle(
                           color: primaryColors,
                           fontWeight: FontWeight.w500,
@@ -57,7 +60,7 @@ class _InforProductState extends State<InforProduct> {
                       ),
                       const SizedBox(width: 5),
                       Text(
-                        formatCurrency.format(variation.price.base),
+                        formatCurrency.format(widget.basePrice),
                         style: TextStyle(
                           color: Colors.black.withOpacity(0.5),
                           fontWeight: FontWeight.w400,

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:single_project/page/screens/cart_screen.dart';
 import 'package:single_project/util/constants.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:single_project/widgets/home_screen/search_product.dart';
 
 class HeaderHome extends StatefulWidget {
   final ScrollController scrollController;
@@ -83,7 +84,7 @@ class _HeaderState extends State<HeaderHome> {
   Widget _buildSearch() {
     return InkWell(
       onTap: () {
-        // showSearch(context: context, delegate: SearchProduct());
+        showSearch(context: context, delegate: SearchProduct());
       },
       child: Container(
         height: 40,

@@ -32,8 +32,11 @@ class _InFrameState extends State<InFrame> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      ProductDetail(id: widget.product.data[index].id),
+                  builder: (context) => ProductDetail(
+                    id: widget.product.data[index].id,
+                    specialPrice: widget.product.data[index].price.special,
+                    basePrice: widget.product.data[index].price.base,
+                  ),
                 ),
               );
             },
@@ -96,6 +99,19 @@ class _InFrameState extends State<InFrame> {
                         fontSize: 15,
                       ),
                     ),
+                  const SizedBox(height: 5),
+                  Container(
+                    decoration: const BoxDecoration(
+                      color: Color.fromARGB(255, 244, 244, 244),
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text(
+                        'Giảm giá đến : 15 % và nhiều khuyến mại hấp dẫn khác',
+                        style: TextStyle(fontSize: 12),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

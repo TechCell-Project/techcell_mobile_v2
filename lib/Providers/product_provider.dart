@@ -1,15 +1,19 @@
 import 'package:flutter/cupertino.dart';
-import 'package:single_project/models/product_model.dart';
+import 'package:single_project/models/product_detail_model.dart';
 
 class ProductProvider extends ChangeNotifier {
-  ListProductModel _listProductModel = ListProductModel(
-    data: [],
-    hasNextPage: false,
+  ProductDetailModel _productDetailModel = ProductDetailModel(
+    productId: '',
+    productName: '',
+    description: '',
+    attributes: [],
+    images: [],
+    variations: [],
   );
-  ListProductModel get listProductModel => _listProductModel;
+  ProductDetailModel get productDetailModel => _productDetailModel;
 
-  void setListProductModel(ListProductModel listProductModel) {
-    _listProductModel = listProductModel;
+  void setProductDetailModel(ProductDetailModel listProductModel) {
+    _productDetailModel = listProductModel;
     notifyListeners();
   }
 }

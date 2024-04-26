@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:single_project/page/screens/cart_screen.dart';
 import 'package:single_project/page/screens/home_screen.dart';
 import 'package:single_project/page/screens/notification_screen.dart';
 import 'package:single_project/page/screens/setting_screen.dart';
@@ -17,7 +16,7 @@ class _MainScreenState extends State<MainScreen> {
   int pageIndex = 0;
   List<Widget> pages = [
     const HomeScreen(),
-    const CartScreen(),
+    // const CartScreen(),
     const NotificationScreen(),
     const SettingScreen(),
   ];
@@ -34,7 +33,7 @@ class _MainScreenState extends State<MainScreen> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
           child: GNav(
-            gap: 4,
+            gap: 3,
             backgroundColor: Colors.white,
             color: Colors.grey,
             activeColor: Colors.white,
@@ -51,10 +50,10 @@ class _MainScreenState extends State<MainScreen> {
                 icon: Icons.home,
                 text: 'Trang chủ',
               ),
-              GButton(
-                icon: Icons.shopping_bag,
-                text: 'Giỏ hàng',
-              ),
+              // GButton(
+              //   icon: Icons.shopping_bag,
+              //   text: 'Giỏ hàng',
+              // ),
               GButton(
                 icon: Icons.notifications,
                 text: 'Thông báo',

@@ -91,8 +91,40 @@ class InterceptorClass {
           return handler.next(response);
         },
         onError: (error, handler) async {
+          final prefs = await SharedPreferences.getInstance();
+
+          String? refreshToken1 = '';
+          final userJson = prefs.getString('user');
+
+          if (userJson != null) {
+            final user = AuthModel.fromJson(userJson);
+            final refreshToken = user.refreshToken;
+
+            refreshToken1 = refreshToken;
+          } else {
+            print('không tìm thấy refreshToken');
+          }
           if (error.response?.statusCode == 401) {
-            print(error);
+            try {
+              print('vao trong cho error');
+              final response = await dio.post(
+                '$uriAuth/refresh',
+                data: {"refreshToken": refreshToken1},
+              );
+              if (response.statusCode == 200) {
+                if (response.data != false) {
+                  await prefs.setString(
+                      "accessToken", response.data["accessToken"]);
+                } else {
+                  print('access token expired');
+                }
+              } else {
+                print('access token expired 1');
+              }
+            } on DioError catch (error) {
+              print('refresh token expired 2');
+              return handler.reject(error);
+            }
           }
           return handler.next(error);
         },
