@@ -6,9 +6,10 @@
         "use": "@vercel/static"
       }
     ],
-    "routes": [
+    "rewrites": [
       {
-        "src": "/(.*)", "dest": "./apk/flutter-apk/app-release.apk"
+        "source": "/(.*)",
+        "destination": "/apk/flutter-apk/app-release.apk"
       }
     ]
   }
