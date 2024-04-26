@@ -1,0 +1,14 @@
+{
+    "version": 2,
+    "builds": [
+      {
+        "src": "build/app/outputs/flutter-apk/myapp.apk",
+        "use": "@vercel/static"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)", "dest": "/apk/flutter-apk/app-release.apk"
+      }
+    ]
+  }
