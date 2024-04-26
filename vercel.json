@@ -2,13 +2,14 @@
     "version": 2,
     "builds": [
       {
-        "src": "build/app/outputs/flutter-apk/myapp.apk",
+        "src": "/apk/flutter-apk/app-release.apk",
         "use": "@vercel/static"
       }
     ],
-    "routes": [
+    "rewrites": [
       {
-        "src": "/(.*)", "dest": "/apk/flutter-apk/app-release.apk"
+        "source": "/(.*)",
+        "destination": "/apk/flutter-apk/app-release.apk"
       }
     ]
   }
