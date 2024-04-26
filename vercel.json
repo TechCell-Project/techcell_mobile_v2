@@ -2,7 +2,7 @@
     "version": 2,
     "builds": [
       {
-        "src": "build/app/outputs/flutter-apk/myapp.apk",
+        "src": "/apk/flutter-apk/app-release.apk",
         "use": "@vercel/static"
       }
     ],
