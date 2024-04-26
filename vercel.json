@@ -8,7 +8,7 @@
     ],
     "routes": [
       {
-        "src": "/(.*)", "dest": "/apk/flutter-apk/app-release.apk"
+        "src": "/(.*)", "dest": "./apk/flutter-apk/app-release.apk"
       }
     ]
   }
