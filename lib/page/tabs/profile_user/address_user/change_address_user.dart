@@ -56,11 +56,11 @@ class _ChangeAdressUserState extends State<ChangeAdressUser> {
   }
 
   List<bool> selected() {
-    if (widget.addressUser.type == 'Nhà') {
+    if (widget.addressUser.type == 'home') {
       setState(() {
         type = [true, false];
       });
-    } else if (widget.addressUser.type == 'Công ty') {
+    } else if (widget.addressUser.type == 'office') {
       setState(() {
         type = [false, true];
       });
@@ -94,6 +94,7 @@ class _ChangeAdressUserState extends State<ChangeAdressUser> {
   @override
   void initState() {
     super.initState();
+    type = selected();
     address.getProvince().then((data) {
       setState(() {
         provinceLevel = data;

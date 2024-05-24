@@ -1,10 +1,7 @@
-// ignore_for_file: use_build_context_synchronously, prefer_final_fields
-
 import 'package:flutter/material.dart';
 import 'package:single_project/api/api_order.dart';
 import 'package:single_project/models/order_model.dart';
 import 'package:single_project/page/tabs/order/order_detail.dart';
-
 import 'package:single_project/util/constants.dart';
 
 class OrderUserTap extends StatefulWidget {
@@ -17,22 +14,61 @@ class OrderUserTap extends StatefulWidget {
 class _OrderUserTapState extends State<OrderUserTap>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
+  Map<String, bool> isLoading = {
+    'pending': false,
+    'canceled': false,
+    'failed': false,
+    'shipping': false,
+    'prepared': false,
+  };
 
-  ListOrderModel listProductOrder =
-      ListOrderModel(orders: [], hasNextPage: false);
+  Map<String, ListOrderModel> listProductOrder = {
+    'pending': ListOrderModel(orders: [], hasNextPage: false),
+    'canceled': ListOrderModel(orders: [], hasNextPage: false),
+    'failed': ListOrderModel(orders: [], hasNextPage: false),
+    'shipping': ListOrderModel(orders: [], hasNextPage: false),
+    'prepared': ListOrderModel(orders: [], hasNextPage: false),
+  };
 
-  Future<void> fetchDataForOrders() async {
-    ApiOrder().getOrder(context).then((value) {
-      setState(() {
-        listProductOrder = value;
-      });
+  Future<void> fetchDataForOrders(String status) async {
+    setState(() {
+      isLoading[status] = true;
     });
+    try {
+      ListOrderModel orders = await ApiOrder().getOrder(context, status);
+      setState(() {
+        listProductOrder[status] = orders;
+      });
+    } catch (e) {
+      print('Error fetching data for $status: $e');
+    } finally {
+      setState(() {
+        isLoading[status] = false;
+      });
+    }
   }
 
   _handleTabSelection() {
-    if (_tabController.indexIsChanging) {
-      setState(() {});
+    if (!_tabController.indexIsChanging) {
+      fetchDataForOrders(_getCurrentTabStatus());
+    }
+  }
+
+  String _getCurrentTabStatus() {
+    switch (_tabController.index) {
+      case 0:
+        return 'pending';
+      case 1:
+        return 'failed';
+      case 2:
+        return 'shipping';
+      case 3:
+        return 'prepared';
+      case 4:
+        return 'canceled';
+      default:
+        return '';
     }
   }
 
@@ -40,7 +76,7 @@ class _OrderUserTapState extends State<OrderUserTap>
   void initState() {
     _tabController = TabController(length: 5, initialIndex: 0, vsync: this);
     _tabController.addListener(_handleTabSelection);
-    fetchDataForOrders();
+    fetchDataForOrders(_getCurrentTabStatus());
     super.initState();
   }
 
@@ -91,11 +127,11 @@ class _OrderUserTapState extends State<OrderUserTap>
         body: TabBarView(
           controller: _tabController,
           children: [
-            buildOrderWidget(listProductOrder),
-            buildOrderWidget(listProductOrder),
-            buildOrderWidget(listProductOrder),
-            buildOrderWidget(listProductOrder),
-            buildOrderWidget(listProductOrder),
+            buildOrderWidget(listProductOrder['pending']),
+            buildOrderWidget(listProductOrder['failed']),
+            buildOrderWidget(listProductOrder['shipping']),
+            buildOrderWidget(listProductOrder['prepared']),
+            buildOrderWidget(listProductOrder['canceled']),
           ],
         ),
       ),
@@ -103,8 +139,8 @@ class _OrderUserTapState extends State<OrderUserTap>
   }
 
   Widget buildOrderWidget(ListOrderModel? orders) {
-    if (orders == null) {
-      return const Center(child: Text('No orders found'));
+    if (orders == null || orders.orders.isEmpty) {
+      return const Center(child: Text('Không có đơn hàng nào!'));
     } else {
       return SingleChildScrollView(
         child: Container(
@@ -298,13 +334,20 @@ class _OrderUserTapState extends State<OrderUserTap>
       case 'pending':
         statusColor = Colors.yellow[800] ?? Colors.transparent;
         break;
-      case 'completed':
+      case 'prepared':
         statusColor = Colors.green;
         break;
-      case 'cancelled':
+      case 'canceled':
         statusColor = Colors.red;
+        break;
+      case 'failed':
+        statusColor = Colors.orange;
+        break;
+      case 'shipping':
+        statusColor = Colors.blue;
+        break;
       default:
-        statusColor = Colors.transparent;
+        statusColor = Colors.black;
         break;
     }
 
@@ -312,7 +355,7 @@ class _OrderUserTapState extends State<OrderUserTap>
       padding: const EdgeInsets.all(10),
       child: Row(
         children: [
-          styleOrderStatus(statusColor, _getStatusText(status)),
+          styleOrderStatus(statusColor, text),
         ],
       ),
     );
@@ -322,12 +365,16 @@ class _OrderUserTapState extends State<OrderUserTap>
     switch (status) {
       case 'pending':
         return 'Đang chờ xác nhận';
-      case 'completed':
+      case 'prepared':
         return 'Đã hoàn thành';
-      case 'cancelled':
+      case 'canceled':
         return 'Đơn hàng đã hủy';
+      case 'failed':
+        return 'Đang xử lý';
+      case 'shipping':
+        return 'Đang giao hàng';
       default:
-        return 'Đang chờ xử lý';
+        return status;
     }
   }
 }

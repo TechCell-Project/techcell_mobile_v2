@@ -20,7 +20,7 @@ class _SelectButtonState extends State<SelectButton> {
   String type = '';
   List<Widget> typeAddress = [
     const Text('Nhà'),
-    const Text('Công ty'),
+    const Text('Cơ quan'),
   ];
   @override
   Widget build(BuildContext context) {
@@ -32,8 +32,8 @@ class _SelectButtonState extends State<SelectButton> {
           for (int i = 0; i < widget.selectedTypeAddress.length; i++) {
             updatedList[i] = i == index;
           }
-          widget.onTypeSelected(
-              widget.selectedTypeAddress[index] ? 'Nhà' : 'Công ty');
+          print(widget.onTypeSelected(
+              widget.selectedTypeAddress[index] ? 'Cơ quan' : 'Nhà'));
         });
       },
       borderRadius: const BorderRadius.all(Radius.circular(8)),

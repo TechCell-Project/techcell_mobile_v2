@@ -29,6 +29,7 @@ class ApiAddress {
       var userProvider = Provider.of<UserProvider>(context, listen: false);
       List<AddressModel> allAddress = userProvider.user.address;
       allAddress.add(address);
+      print(jsonEncode(address));
       Response res = await dioWithInterceptor.patch(
         '$uriAuth/me',
         data: {"address": allAddress},

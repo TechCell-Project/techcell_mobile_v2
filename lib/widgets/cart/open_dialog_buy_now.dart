@@ -7,32 +7,31 @@ import 'package:provider/provider.dart';
 import 'package:single_project/Providers/user_provider.dart';
 import 'package:single_project/api/api_order.dart';
 import 'package:single_project/models/address_model.dart';
-import 'package:single_project/models/cart_model.dart';
 import 'package:single_project/page/tabs/profile_user/address_user/add_address_user.dart';
 import 'package:single_project/page/tabs/profile_user/address_user/change_address_user.dart';
 import 'package:single_project/util/constants.dart';
 import 'package:single_project/widgets/button/button_send_requrest.dart';
 
-class OpenDialogAddreess extends StatefulWidget {
-  List<Product> productCart;
-
-  OpenDialogAddreess({
+class OpenDialogAddreessBuyNow extends StatefulWidget {
+  String skuId;
+  OpenDialogAddreessBuyNow({
     super.key,
-    required this.productCart,
+    required this.skuId,
   });
 
   @override
-  State<OpenDialogAddreess> createState() => _OpenDialogAddreessState();
+  State<OpenDialogAddreessBuyNow> createState() =>
+      _OpenDialogAddreessBuyNowState();
 }
 
-class _OpenDialogAddreessState extends State<OpenDialogAddreess> {
+class _OpenDialogAddreessBuyNowState extends State<OpenDialogAddreessBuyNow> {
   int valueChecked = 0;
 
   void getReviewOrder() {
-    ApiOrder().preViewOrderFromCart(
+    ApiOrder().preViewOrderBuyNow(
       context,
       valueChecked,
-      widget.productCart,
+      widget.skuId,
     );
   }
 

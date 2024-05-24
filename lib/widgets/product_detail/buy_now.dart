@@ -3,16 +3,19 @@
 import 'package:flutter/material.dart';
 import 'package:single_project/models/product_detail_model.dart';
 import 'package:single_project/util/constants.dart';
+import 'package:single_project/widgets/cart/open_dialog_buy_now.dart';
 
 class BuyNow extends StatefulWidget {
   List<ProductVariation> variations;
   String id;
-  final handleSelectVariation;
+  Function handleSelectVariation;
+  String text;
   BuyNow({
     super.key,
     required this.variations,
     required this.id,
-    this.handleSelectVariation,
+    required this.handleSelectVariation,
+    required this.text,
   });
 
   @override
@@ -125,9 +128,17 @@ class _BuyNowState extends State<BuyNow> {
                   height: 60,
                   child: ElevatedButton(
                     onPressed: () {
-                      if (selectedVariation == null) {
-                        return;
-                      } else {}
+                      if (selectedVariation != null) {
+                        Navigator.pop(context);
+                        Future.delayed(const Duration(milliseconds: 200), () {
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (_) => OpenDialogAddreessBuyNow(
+                              skuId: skuId,
+                            ),
+                          );
+                        });
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: selectedVariation != null
@@ -137,16 +148,16 @@ class _BuyNowState extends State<BuyNow> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: const Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 85, vertical: 15),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 85, vertical: 15),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Thêm vào giỏ hàng",
-                            style: TextStyle(
+                            widget.text,
+                            style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
                               color: Colors.white,

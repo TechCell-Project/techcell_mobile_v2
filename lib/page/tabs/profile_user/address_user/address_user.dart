@@ -1,9 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:single_project/Providers/user_provider.dart';
 import 'package:single_project/api/api_profile_user.dart';
-import 'package:single_project/models/address_model.dart';
 import 'package:single_project/page/tabs/profile_user/address_user/add_address_user.dart';
 import 'package:single_project/page/tabs/profile_user/address_user/change_address_user.dart';
 import 'package:single_project/util/constants.dart';
@@ -17,13 +14,10 @@ class AddreesUserTab extends StatefulWidget {
 }
 
 class _AddreesUserTabState extends State<AddreesUserTab> {
-  List<AddressModel> addressUser = [];
   UserWidget userWidget = UserWidget();
 
   @override
   Widget build(BuildContext context) {
-    List<AddressModel> addressUser =
-        Provider.of<UserProvider>(context, listen: false).user.address;
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -42,6 +36,7 @@ class _AddreesUserTabState extends State<AddreesUserTab> {
                 child: CircularProgressIndicator(),
               );
             } else {
+              final addressUser = snapshoot.data!.address;
               return SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

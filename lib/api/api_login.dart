@@ -10,6 +10,8 @@ import 'package:single_project/util/interceptor.dart';
 import 'package:single_project/util/snackbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ApiLogin {
   Dio dio = Dio();
@@ -93,6 +95,63 @@ class ApiLogin {
       // );
     } catch (e) {
       print('loi dang xuat');
+    }
+  }
+
+  void signInWithGoogle({required BuildContext context}) async {
+    try {
+      final GoogleSignIn signinInstance = GoogleSignIn(
+        scopes: ['openid', 'email', 'profile'],
+        clientId: dotenv.env['GOOGLE_CLIENT_ID'],
+      );
+      final GoogleSignInAccount? googleUser = await signinInstance.signIn();
+      if (googleUser == null) {
+        return showSnackBarError(context, 'Sigin Google failed');
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      // String? idToken = googleAuth.idToken;
+
+      await signinInstance.signIn().then((result) {
+        result?.authentication.then((googleKey) {
+          print(googleKey.accessToken);
+          print(googleKey.idToken);
+        }).catchError((err) {
+          print('inner error');
+        });
+      }).catchError((err) {
+        print('error occured');
+      });
+      // if (idToken == null) return;
+      print('ggAUTH:: ${googleAuth.toString()}');
+      print('idToken:: ${googleAuth.idToken}');
+      sendIdTokenToServer(context,
+          idToken: '${googleAuth.idToken}',
+          accessTokenGoogle: '${googleAuth.accessToken}');
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void sendIdTokenToServer(BuildContext context,
+      {required String idToken, required String accessTokenGoogle}) async {
+    try {
+      Response res = await dio.post('$uriAuth/google/login',
+          data: {"idToken": idToken, "accessTokenGoogle": accessTokenGoogle});
+      httpSuccessHandle(
+        response: res,
+        context: context,
+        onSuccess: () async {
+          final prefs = await SharedPreferences.getInstance();
+          prefs.setString('user', jsonEncode(res.data));
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const MainScreen()),
+              (route) => false);
+        },
+      );
+    } catch (e) {
+      print(e);
     }
   }
 }

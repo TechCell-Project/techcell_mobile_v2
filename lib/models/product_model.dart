@@ -35,7 +35,7 @@ class ListProductResponse {
   String name;
   String modelName;
   String brandName;
-  ImageModel imageModel;
+  List<ImageModel> imageModel;
   PriceModel price;
   List<String> tag;
 
@@ -54,7 +54,7 @@ class ListProductResponse {
       'name': name,
       'modelName': modelName,
       'brandName': brandName,
-      'imageModel': imageModel.toMap(),
+      'imageModel': imageModel.map((x) => x.toMap()).toList(),
       'tag': tag,
       'price': price.toMap(),
     };
@@ -66,13 +66,10 @@ class ListProductResponse {
         name: json['name'] ?? '',
         modelName: json['modelName'] ?? '',
         brandName: json['brandName'] ?? '',
-        imageModel: json['imageModel'] != null
-            ? ImageModel.fromJson(json['imageModel'])
-            : ImageModel(
-                url: '',
-                publicId: '',
-                isThumbnail: false,
-              ),
+        imageModel: (json['images'] as List<dynamic>?)
+                ?.map((imageJson) => ImageModel.fromJson(imageJson))
+                .toList() ??
+            [],
         tag: json['tag'] ?? [],
         price: PriceModel.fromJson(
           json['price'] ?? {},

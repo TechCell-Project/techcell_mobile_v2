@@ -10,7 +10,8 @@ import 'package:single_project/util/snackbar.dart';
 
 class ProductApi {
   Dio dio = Dio();
-  Future<ListProductModel> getProducts(BuildContext context) async {
+  Future<ListProductModel> getProducts(BuildContext context,
+      {String? query}) async {
     ListProductModel listProduct =
         ListProductModel(data: [], hasNextPage: false);
     try {
@@ -22,6 +23,12 @@ class ProductApi {
         onSuccess: () {
           Map<String, dynamic> responseData = res.data;
           listProduct = ListProductModel.fromJson(responseData);
+          if (query != null) {
+            listProduct.data = listProduct.data
+                .where((element) =>
+                    element.name.toLowerCase().contains(query.toLowerCase()))
+                .toList();
+          }
         },
       );
     } catch (e) {

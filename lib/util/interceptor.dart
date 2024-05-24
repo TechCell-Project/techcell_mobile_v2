@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, deprecated_member_use
+// ignore_for_file: avoid_print
 
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,124 +12,97 @@ class InterceptorClass {
   InterceptorClass() {
     dioWithInterceptor = getDioWithInterceptor();
   }
-  bool isAccessTokenValid(int accessTokenExpires) {
-    final currentTimeInMilliseconds = DateTime.now().millisecondsSinceEpoch;
-    final expirationTimeInMilliseconds = accessTokenExpires * 1000;
-    return currentTimeInMilliseconds < expirationTimeInMilliseconds;
-  }
 
   Dio getDioWithInterceptor() {
-    Dio dio = Dio();
+    Dio dio = Dio()
+      ..options.connectTimeout = const Duration(seconds: 3)
+      ..options.receiveTimeout = const Duration(seconds: 3);
+
     dio.interceptors.add(
       InterceptorsWrapper(
-        onRequest: (options, handler) async {
-          final prefs = await SharedPreferences.getInstance();
-
-          options.connectTimeout = const Duration(seconds: 3000);
-          options.receiveTimeout = const Duration(seconds: 3000);
-
-          // Lấy các token được lưu tạm từ local storage
-          String? accessToken = '';
-          int? expiredTime = 0;
-          String? refreshToken1 = '';
-          final userJson = prefs.getString('user');
-
-          if (userJson != null) {
-            final user = AuthModel.fromJson(userJson);
-            final refreshToken = user.refreshToken;
-            final expiredTime1 = user.accessTokenExpires;
-            final accessToken1 = user.accessToken;
-            refreshToken1 = refreshToken;
-            accessToken = accessToken1;
-            expiredTime = expiredTime1 * 1000;
-          } else {
-            print('không tìm thấy refreshToken');
-          }
-          if (expiredTime != 0) {
-            final expiredTimeMilliseconds = int.parse(expiredTime.toString());
-            final expiredTimeInSeconds = expiredTimeMilliseconds ~/ 1000;
-            expiredTime = expiredTimeInSeconds;
-          }
-          // final expiredTimeConvert = DateTime.parse(expiredTime.toString());
-          // final isExpired = DateTime.now().isAfter(expiredTimeConvert);
-          if (expiredTime == 0) {
-            print('vao check');
-            try {
-              print('vao trong cho nay');
-              final response = await dio.post(
-                '$uriAuth/refresh',
-                data: {"refreshToken": refreshToken1},
-              );
-              if (response.statusCode == 200) {
-                if (response.data != false) {
-                  options.headers['Authorization'] =
-                      "Bearer ${response.data["accessToken"]}";
-                  final expiredTime = Duration(
-                      seconds: response.data["accessTokenExpires"] - 240);
-                  await prefs.setString(
-                      "accessToken", response.data["accessToken"]);
-                  await prefs.setString(
-                      "accessTokenExpires", expiredTime.toString());
-                } else {
-                  print('access token expired');
-                }
-              } else {
-                print('access token expired 1');
-              }
-              return handler.next(options);
-            } on DioError catch (error) {
-              print('refresh token expired 2');
-              return handler.reject(error, true);
-            }
-          } else {
-            print('access token valid');
-            options.headers['Authorization'] = "Bearer $accessToken";
-            return handler.next(options);
-          }
-        },
-        onResponse: (Response response, handler) {
-          return handler.next(response);
-        },
-        onError: (error, handler) async {
-          final prefs = await SharedPreferences.getInstance();
-
-          String? refreshToken1 = '';
-          final userJson = prefs.getString('user');
-
-          if (userJson != null) {
-            final user = AuthModel.fromJson(userJson);
-            final refreshToken = user.refreshToken;
-
-            refreshToken1 = refreshToken;
-          } else {
-            print('không tìm thấy refreshToken');
-          }
-          if (error.response?.statusCode == 401) {
-            try {
-              print('vao trong cho error');
-              final response = await dio.post(
-                '$uriAuth/refresh',
-                data: {"refreshToken": refreshToken1},
-              );
-              if (response.statusCode == 200) {
-                if (response.data != false) {
-                  await prefs.setString(
-                      "accessToken", response.data["accessToken"]);
-                } else {
-                  print('access token expired');
-                }
-              } else {
-                print('access token expired 1');
-              }
-            } on DioError catch (error) {
-              print('refresh token expired 2');
-              return handler.reject(error);
-            }
-          }
-          return handler.next(error);
-        },
+        onRequest: _handleOnRequest,
+        onResponse: _handleOnResponse,
+        onError: _handleOnError,
       ),
     );
+
     return dio;
+  }
+
+  Future<void> _handleOnRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
+    final prefs = await SharedPreferences.getInstance();
+    final userJson = prefs.getString('user');
+
+    if (userJson != null) {
+      final user = AuthModel.fromJson(userJson);
+      options.headers['Authorization'] = "Bearer ${user.accessToken}";
+    }
+
+    handler.next(options);
+  }
+
+  void _handleOnResponse(
+      Response response, ResponseInterceptorHandler handler) {
+    handler.next(response);
+  }
+
+  Future<void> _handleOnError(
+      // ignore: deprecated_member_use
+      DioError error,
+      ErrorInterceptorHandler handler) async {
+    if (error.response?.statusCode == 401 && !isRefreshing) {
+      isRefreshing = true;
+
+      final prefs = await SharedPreferences.getInstance();
+      final userJson = prefs.getString('user');
+
+      if (userJson != null) {
+        final user = AuthModel.fromJson(userJson);
+        final refreshToken = user.refreshToken;
+
+        try {
+          final response = await dioWithInterceptor!.post(
+            '$uriAuth/refresh',
+            data: {"refreshToken": refreshToken},
+            options: Options(headers: {"Content-Type": "application/json"}),
+          );
+
+          if (response.statusCode == 200 && response.data != false) {
+            final newAccessToken = response.data["accessToken"];
+            user.accessToken = newAccessToken;
+            await prefs.setString('user', user.toJson());
+
+            // Retry the original request with the new access token
+            final retryOptions = error.requestOptions;
+            retryOptions.headers['Authorization'] = "Bearer $newAccessToken";
+            final cloneReq = await dioWithInterceptor!.request(
+              retryOptions.path,
+              options: Options(
+                method: retryOptions.method,
+                headers: retryOptions.headers,
+              ),
+              data: retryOptions.data,
+              queryParameters: retryOptions.queryParameters,
+            );
+            handler.resolve(cloneReq);
+          } else {
+            print(
+                'Failed to refresh token, status code: ${response.statusCode}');
+            handler.reject(error);
+          }
+        } catch (e) {
+          print('Refresh token request failed: $e');
+          handler.reject(error);
+        } finally {
+          isRefreshing = false;
+        }
+      } else {
+        print('User data not found in SharedPreferences');
+        handler.reject(error);
+      }
+    } else {
+      handler.next(error);
+    }
   }
 }

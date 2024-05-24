@@ -1,8 +1,9 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, curly_braces_in_flow_control_structures
 
 import 'package:flutter/material.dart';
 import 'package:single_project/api/api_order.dart';
 import 'package:single_project/models/order_model.dart';
+import 'package:single_project/page/tabs/order/cancel_order.dart';
 
 import 'package:single_project/util/constants.dart';
 import 'package:single_project/widgets/button/button_send_requrest.dart';
@@ -122,7 +123,7 @@ class _OrderDetailState extends State<OrderDetail> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Đơn hàng đang chờ xử lý',
+                'Đơn hàng đang chờ  lấy hàng',
                 style: TextStyle(color: Colors.white),
               ),
               Text(
@@ -604,13 +605,13 @@ class _OrderDetailState extends State<OrderDetail> {
         child: ButtonSendrequest(
             text: 'Hủy đơn hàng',
             submit: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: ((context) =>
-              //         ReaSonCancelledOrder(orderId: widget.orderDetail.id)),
-              //   ),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: ((context) =>
+                      ReaSonCancelledOrder(orderId: widget.orderDetail.id)),
+                ),
+              );
             }),
       );
     } else

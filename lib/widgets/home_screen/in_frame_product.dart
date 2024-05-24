@@ -54,11 +54,11 @@ class _InFrameProductState extends State<InFrameProduct> {
               ),
               child: Column(
                 children: [
-                  if (widget.products.data[index].imageModel.url != '')
+                  if (widget.products.data[index].imageModel.isNotEmpty)
                     Image(
                       image: NetworkImage(
-                          widget.products.data[index].imageModel.url),
-                      height: 200,
+                          widget.products.data[index].imageModel[0].url),
+                      height: 160,
                       fit: BoxFit.cover,
                     )
                   else
@@ -74,18 +74,8 @@ class _InFrameProductState extends State<InFrameProduct> {
                     ),
                   ),
                   if (widget.products.data[index].price.special != 0)
-                    Row(
+                    Column(
                       children: [
-                        Text(
-                          formatCurrency.format(
-                              widget.products.data[index].price.special),
-                          style: const TextStyle(
-                            color: primaryColors,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 15,
-                          ),
-                        ),
-                        const Spacer(),
                         Text(
                           formatCurrency
                               .format(widget.products.data[index].price.base),
@@ -94,6 +84,15 @@ class _InFrameProductState extends State<InFrameProduct> {
                             fontWeight: FontWeight.w400,
                             decoration: TextDecoration.lineThrough,
                             fontSize: 12,
+                          ),
+                        ),
+                        Text(
+                          formatCurrency.format(
+                              widget.products.data[index].price.special),
+                          style: const TextStyle(
+                            color: primaryColors,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 15,
                           ),
                         ),
                       ],

@@ -100,6 +100,7 @@ class BuildBottom extends StatelessWidget {
                     builder: (context) => BuyNow(
                       variations: productDetail.variations,
                       id: productDetail.productId,
+                      text: 'Mua ngay',
                       handleSelectVariation: () {},
                     ),
                   );

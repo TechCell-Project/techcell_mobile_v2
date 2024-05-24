@@ -17,8 +17,9 @@ class CartTab extends StatefulWidget {
 class _CartTabState extends State<CartTab> {
   List<Product> productSend = [];
   int valueChecked = 0;
-  int priceProduct = 0;
   double totalAmount = 0.0;
+  String urlImage = '';
+  int priceProduct = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +73,6 @@ class _CartTabState extends State<CartTab> {
               snapshot1.data!.products[index].skuId,
               valueChecked,
             );
-            print(snapshot1.data!.products[index].quantity);
           }
 
           return Scaffold(
@@ -110,235 +110,182 @@ class _CartTabState extends State<CartTab> {
                                   ),
                                 );
                               }
-
-                              double total = 0;
-                              for (var i = 0;
-                                  i < snapshot1.data!.products.length;
-                                  i++) {
-                                final itemCart = snapshot1.data!.products[i];
-
-                                total += itemCart.quantity *
-                                    snapshot2.data!.variations[indexCart].price
-                                        .special;
-                              }
-                              totalAmount = total;
-
-                              final priceProduct = product.quantity *
-                                  snapshot2.data!.variations[indexCart].price
-                                      .special;
-                              final variationIndex = snapshot2.data!.variations
-                                  .indexWhere((variation) =>
+                              final variations = snapshot2.data!.variations;
+                              int variationIndex = variations.indexWhere(
+                                  (variation) =>
                                       variation.skuId == product.skuId);
+                              if (variationIndex != -1) {
+                                urlImage = variations[variationIndex].image.url;
+                                priceProduct = product.quantity *
+                                    variations[variationIndex].price.special;
+                                totalAmount += priceProduct;
+                              }
 
                               return Dismissible(
-                                  key: Key(product.productId),
-                                  direction: DismissDirection.endToStart,
-                                  onDismissed: (direction) {
-                                    deleteCart(indexCart);
-                                  },
-                                  background: Container(
-                                    color: Colors.red,
-                                    alignment: Alignment.centerRight,
-                                    child: const Center(
-                                      child: Icon(
-                                        Icons.delete,
-                                        color: Colors.white,
-                                        size: 40,
-                                      ),
+                                key: Key(product.productId),
+                                direction: DismissDirection.endToStart,
+                                onDismissed: (direction) {
+                                  deleteCart(indexCart);
+                                },
+                                background: Container(
+                                  color: Colors.red,
+                                  alignment: Alignment.centerRight,
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.delete,
+                                      color: Colors.white,
+                                      size: 40,
                                     ),
                                   ),
-                                  child: Container(
-                                      width: 400,
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10),
-                                      margin: const EdgeInsets.symmetric(
-                                          vertical: 5),
-                                      decoration: BoxDecoration(
-                                        color: const Color.fromARGB(
-                                            255, 240, 239, 239),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Row(children: [
-                                        Expanded(
-                                          child: Row(
-                                            children: [
-                                              InkWell(
-                                                onTap: () {
-                                                  // Navigator.push(
-                                                  //   context,
-                                                  //   MaterialPageRoute(
-                                                  //     builder: (context) =>
-                                                  //         ProductDetail(
-                                                  //             productDetail:
-                                                  //                 itemProduct),
-                                                  //   ),
-                                                  // );
-                                                },
+                                ),
+                                child: Container(
+                                  width: 400,
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 10),
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 5),
+                                  decoration: BoxDecoration(
+                                    color: const Color.fromARGB(
+                                        255, 240, 239, 239),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Row(
+                                          children: [
+                                            InkWell(
+                                              onTap: () {
+                                                // Navigator.push(
+                                                //   context,
+                                                //   MaterialPageRoute(
+                                                //     builder: (context) =>
+                                                //         ProductDetail(
+                                                //             productDetail:
+                                                //                 itemProduct),
+                                                //   ),
+                                                // );
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
                                                 child: SizedBox(
                                                   height: 120,
                                                   width: 120,
-                                                  child: ListView.builder(
-                                                    scrollDirection:
-                                                        Axis.horizontal,
-                                                    itemCount: snapshot2
-                                                        .data!.images.length,
-                                                    itemBuilder:
-                                                        (context, index) {
-                                                      final image = snapshot2
-                                                          .data!.images[index];
-                                                      if (image.isThumbnail ==
-                                                          true) {
-                                                        return Image(
-                                                          image: NetworkImage(
-                                                              image.url),
-                                                        );
-                                                      } else if (index == 0) {
-                                                        return Image.asset(
-                                                            'assets/images/galaxy-z-fold-5-xanh-1.png');
-                                                      }
-                                                      return Container();
-                                                    },
-                                                  ),
+                                                  child: urlImage.isNotEmpty
+                                                      ? Image.network(urlImage,
+                                                          fit: BoxFit.cover)
+                                                      : Image.asset(
+                                                          'assets/images/galaxy-z-fold-5-xanh-1.png'),
                                                 ),
                                               ),
-                                              const SizedBox(width: 5),
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  SizedBox(
-                                                    width: 220,
-                                                    child: Text(
-                                                      snapshot2
-                                                          .data!.productName,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      maxLines: 1,
-                                                      style: const TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 18,
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                      ),
+                                            ),
+                                            const SizedBox(width: 5),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                SizedBox(
+                                                  width: 220,
+                                                  child: Text(
+                                                    snapshot2.data!.productName,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 1,
+                                                    style: const TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.w400,
                                                     ),
                                                   ),
-                                                  const SizedBox(height: 5),
-                                                  Row(
-                                                    children: [
-                                                      const Text('Phân loại:'),
-                                                      SizedBox(
-                                                        height:
-                                                            15, // Adjust the height as needed
-                                                        width: 150,
-                                                        child: Row(
-                                                          children: snapshot2
+                                                ),
+                                                const SizedBox(height: 5),
+                                                Row(
+                                                  children: [
+                                                    const Text('Phân loại:'),
+                                                    SizedBox(
+                                                      height:
+                                                          15, // Adjust the height as needed
+                                                      width: 150,
+                                                      child: Row(
+                                                        children: snapshot2
+                                                            .data!
+                                                            .variations[
+                                                                variationIndex]
+                                                            .attributes
+                                                            .map((attribute) =>
+                                                                Text(
+                                                                    '${attribute.value} ${attribute.unit}'))
+                                                            .toList(),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 5),
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      formatCurrency
+                                                          .format(priceProduct),
+                                                      style: const TextStyle(
+                                                        color: Colors.red,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontSize: 16,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 5),
+                                                    Text(
+                                                      '-',
+                                                      style: TextStyle(
+                                                        color: Colors.grey
+                                                            .withOpacity(1),
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontSize: 16,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 5),
+                                                    Text(
+                                                      formatCurrency.format(
+                                                          snapshot2
                                                               .data!
                                                               .variations[
                                                                   variationIndex]
-                                                              .attributes
-                                                              .map((attribute) =>
-                                                                  Text(
-                                                                      '${attribute.value} ${attribute.unit}'))
-                                                              .toList(),
-                                                        ),
+                                                              .price
+                                                              .base),
+                                                      style: TextStyle(
+                                                        color: Colors.grey
+                                                            .withOpacity(1),
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        decoration:
+                                                            TextDecoration
+                                                                .lineThrough,
+                                                        fontSize: 16,
                                                       ),
-                                                    ],
-                                                  ),
-                                                  const SizedBox(height: 5),
-                                                  Row(
-                                                    children: [
-                                                      Text(
-                                                        formatCurrency.format(
-                                                            priceProduct),
-                                                        style: const TextStyle(
-                                                          color: Colors.red,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          fontSize: 16,
-                                                        ),
-                                                      ),
-                                                      const SizedBox(width: 5),
-                                                      Text(
-                                                        '-',
-                                                        style: TextStyle(
-                                                          color: Colors.grey
-                                                              .withOpacity(1),
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          fontSize: 16,
-                                                        ),
-                                                      ),
-                                                      const SizedBox(width: 5),
-                                                      Text(
-                                                        formatCurrency.format(
-                                                            snapshot2
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 5),
+                                                Row(
+                                                  children: [
+                                                    InkWell(
+                                                      onTap: () {
+                                                        if (snapshot1
                                                                 .data!
-                                                                .variations[
-                                                                    variationIndex]
-                                                                .price
-                                                                .base),
-                                                        style: TextStyle(
-                                                          color: Colors.grey
-                                                              .withOpacity(1),
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          decoration:
-                                                              TextDecoration
-                                                                  .lineThrough,
-                                                          fontSize: 16,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  const SizedBox(height: 5),
-                                                  Row(
-                                                    children: [
-                                                      InkWell(
-                                                        onTap: () {
-                                                          if (snapshot1
-                                                                  .data!
-                                                                  .products[
-                                                                      indexCart]
-                                                                  .quantity >=
-                                                              1) {
-                                                            deCrementQuantity(
-                                                                indexCart);
-                                                          } else {
-                                                            null;
-                                                          }
-                                                        },
-                                                        child: Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            border: Border.all(
-                                                              color: Colors
-                                                                  .redAccent,
-                                                              width: 0.5,
-                                                            ),
-                                                            color: Colors.white,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        0),
-                                                          ),
-                                                          child: const Padding(
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                                    horizontal:
-                                                                        5,
-                                                                    vertical:
-                                                                        2),
-                                                            child: Icon(
-                                                              Icons.remove,
-                                                              color: Colors.red,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Container(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(2),
+                                                                .products[
+                                                                    indexCart]
+                                                                .quantity >=
+                                                            1) {
+                                                          deCrementQuantity(
+                                                              indexCart);
+                                                        } else {
+                                                          null;
+                                                        }
+                                                      },
+                                                      child: Container(
                                                         decoration:
                                                             BoxDecoration(
                                                           border: Border.all(
@@ -351,71 +298,95 @@ class _CartTabState extends State<CartTab> {
                                                               BorderRadius
                                                                   .circular(0),
                                                         ),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                                  horizontal:
-                                                                      10,
-                                                                  vertical:
-                                                                      2.5),
-                                                          child: Text(
-                                                            snapshot1
-                                                                .data!
-                                                                .products[
-                                                                    indexCart]
-                                                                .quantity
-                                                                .toString(),
-                                                            style:
-                                                                const TextStyle(
-                                                              fontSize: 14,
-                                                              color:
-                                                                  Colors.black,
-                                                            ),
+                                                        child: const Padding(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal: 5,
+                                                                  vertical: 2),
+                                                          child: Icon(
+                                                            Icons.remove,
+                                                            color: Colors.red,
                                                           ),
                                                         ),
                                                       ),
-                                                      InkWell(
-                                                        onTap: () {
-                                                          inCrementQuantity(
-                                                              indexCart);
-                                                        },
-                                                        child: Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            border: Border.all(
-                                                              color: Colors
-                                                                  .redAccent,
-                                                              width: 0.5,
-                                                            ),
-                                                            color: Colors.white,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        0),
-                                                          ),
-                                                          child: const Padding(
-                                                            padding: EdgeInsets
+                                                    ),
+                                                    Container(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              2),
+                                                      decoration: BoxDecoration(
+                                                        border: Border.all(
+                                                          color:
+                                                              Colors.redAccent,
+                                                          width: 0.5,
+                                                        ),
+                                                        color: Colors.white,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(0),
+                                                      ),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
                                                                 .symmetric(
-                                                                    horizontal:
-                                                                        5,
-                                                                    vertical:
-                                                                        2),
-                                                            child: Icon(
-                                                              Icons.add,
-                                                              color: Colors.red,
-                                                            ),
+                                                                horizontal: 10,
+                                                                vertical: 2.5),
+                                                        child: Text(
+                                                          snapshot1
+                                                              .data!
+                                                              .products[
+                                                                  indexCart]
+                                                              .quantity
+                                                              .toString(),
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 14,
+                                                            color: Colors.black,
                                                           ),
                                                         ),
                                                       ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
+                                                    ),
+                                                    InkWell(
+                                                      onTap: () {
+                                                        inCrementQuantity(
+                                                            indexCart);
+                                                      },
+                                                      child: Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          border: Border.all(
+                                                            color: Colors
+                                                                .redAccent,
+                                                            width: 0.5,
+                                                          ),
+                                                          color: Colors.white,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(0),
+                                                        ),
+                                                        child: const Padding(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal: 5,
+                                                                  vertical: 2),
+                                                          child: Icon(
+                                                            Icons.add,
+                                                            color: Colors.red,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ],
                                         ),
-                                      ])));
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
                             });
                       },
                     ),
@@ -423,14 +394,14 @@ class _CartTabState extends State<CartTab> {
                 ],
               ),
             ),
-            bottomNavigationBar: _buildTotalAmountAndPayment(),
+            bottomNavigationBar: _buildTotalAmountAndPayment(totalAmount),
           );
         },
       ),
     );
   }
 
-  Widget _buildTotalAmountAndPayment() {
+  Widget _buildTotalAmountAndPayment(double totalAmount) {
     return SizedBox(
       height: 160,
       child: Column(
@@ -438,11 +409,29 @@ class _CartTabState extends State<CartTab> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Row(
+              children: [
+                const Text(
+                  'Tổng tiền:',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const Spacer(),
+                Text(
+                  formatCurrency.format(totalAmount),
+                  style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: primaryColors),
+                ),
+              ],
+            ),
+          ),
+          Padding(
               padding: const EdgeInsets.all(15),
               child: ButtonSendrequest(
                 text: 'Mua hàng',
                 submit: () {
-                  print('all');
                   showModalBottomSheet(
                     context: context,
                     isScrollControlled: true,

@@ -26,6 +26,10 @@ class _LoginTapState extends State<LoginTap> {
         password: passwordcontroller.text);
   }
 
+  void loginGoogle() {
+    authLogin.signInWithGoogle(context: context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -122,7 +126,9 @@ class _LoginTapState extends State<LoginTap> {
                     const SizedBox(height: 20),
                     const SizedBox(height: 20),
                     ButtonLogin(
-                      loginWith: () {},
+                      loginWith: () {
+                        ApiLogin().signInWithGoogle(context: context);
+                      },
                       image: 'assets/icons/google.png',
                       text: 'Đăng nhập bằng Google',
                     ),

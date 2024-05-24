@@ -283,8 +283,8 @@ class _CreateOrderState extends State<CreateOrder> {
                                     height: 15,
                                     width: 150,
                                     child: Text(
-                                      widget
-                                          .orderResponse.products[index].skuId,
+                                      widget.orderResponse.products[index]
+                                          .productType,
                                       style: const TextStyle(
                                         color: Colors.black,
                                         fontSize: 14,

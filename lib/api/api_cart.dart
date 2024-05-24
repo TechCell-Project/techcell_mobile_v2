@@ -32,6 +32,7 @@ class ApiCart {
           context: context,
           onSuccess: () {
             showSnackBarSuccess(context, 'Thanh cong');
+            Navigator.pop(context);
           });
     } catch (e) {
       print(e);
@@ -56,7 +57,12 @@ class ApiCart {
           }
         ]
       });
-      httpSuccessHandle(response: res, context: context, onSuccess: () {});
+      httpSuccessHandle(
+          response: res,
+          context: context,
+          onSuccess: () {
+            getCart(context);
+          });
     } catch (e) {
       showSnackBarError(context, 'That bai');
     }
@@ -74,9 +80,8 @@ class ApiCart {
           cartItem = CartItem.fromJson(res.data);
         },
       );
-    } catch (e, i) {
+    } catch (e) {
       print(e);
-      print(i);
       showSnackBarError(context, 'That bai');
     }
     return cartItem;

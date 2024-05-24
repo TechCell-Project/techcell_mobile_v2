@@ -22,6 +22,7 @@ class _AddAdressUserState extends State<AddAdressUser> {
   final TextEditingController detailController = TextEditingController();
   final TextEditingController addressTypeController = TextEditingController();
   String typeAddress = '';
+  List<bool> listType = [false, false];
   ApiAddress address = ApiAddress();
   List<ProvinceLevel> provinceLevel = [];
   List<DistrictLevel> districtsLevel = [];
@@ -257,11 +258,18 @@ class _AddAdressUserState extends State<AddAdressUser> {
                     const Text('Loại địa chỉ'),
                     const Spacer(),
                     SelectButton(
-                      selectedTypeAddress: const [false, false],
+                      selectedTypeAddress: listType,
                       onTypeSelected: (type) {
                         setState(() {
-                          typeAddress = type;
+                          if (type == 'Nhà') {
+                            typeAddress = 'home';
+                            listType = [false, true];
+                          } else if (type == 'Cơ quan') {
+                            typeAddress = 'office';
+                            listType = [true, false];
+                          }
                         });
+                        return type;
                       },
                     ),
                   ],

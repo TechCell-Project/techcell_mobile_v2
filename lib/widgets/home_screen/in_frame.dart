@@ -49,11 +49,11 @@ class _InFrameState extends State<InFrame> {
               ),
               child: Column(
                 children: [
-                  if (product.imageModel.url != '')
+                  if (widget.product.data[index].imageModel.isNotEmpty)
                     Image(
                       image: NetworkImage(
-                          widget.product.data[index].imageModel.url),
-                      height: 200,
+                          widget.product.data[index].imageModel[0].url),
+                      height: 165,
                       fit: BoxFit.cover,
                     )
                   else
@@ -69,16 +69,8 @@ class _InFrameState extends State<InFrame> {
                     ),
                   ),
                   if (product.price.special != 0)
-                    Row(
+                    Column(
                       children: [
-                        Text(
-                          formatCurrency.format(product.price.special),
-                          style: const TextStyle(
-                            color: primaryColors,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 15,
-                          ),
-                        ),
                         Text(
                           formatCurrency.format(product.price.base),
                           style: const TextStyle(
@@ -86,6 +78,14 @@ class _InFrameState extends State<InFrame> {
                             fontWeight: FontWeight.w400,
                             decoration: TextDecoration.lineThrough,
                             fontSize: 12,
+                          ),
+                        ),
+                        Text(
+                          formatCurrency.format(product.price.special),
+                          style: const TextStyle(
+                            color: primaryColors,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 15,
                           ),
                         ),
                       ],

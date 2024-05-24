@@ -19,7 +19,8 @@ class ProductDetail extends StatefulWidget {
       {super.key,
       required this.id,
       required this.basePrice,
-      required this.specialPrice, required });
+      required this.specialPrice,
+      required});
 
   @override
   State<ProductDetail> createState() => _ProductDetailState();
